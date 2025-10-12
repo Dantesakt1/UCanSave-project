@@ -1,0 +1,85 @@
+/* Estilo general para el cuerpo */
+body {
+    font-family: Arial, sans-serif; 
+    margin: 0; /* Elimina los márgenes por defecto del cuerpo */
+    padding: 0; /* Elimina el relleno por defecto del cuerpo */
+    background-color: #f9f9f9;
+}
+
+/* Estilo para los encabezados */
+h1 {
+    color: #333;
+    text-align: center; /* Centra el texto horizontalmente */
+}
+
+/* Estilo para los botones */
+button {
+    background-color: #2c7a7b; 
+    color: white;
+    border: none;
+    padding: 10px 15px; /* Agrega espacio interno (10px arriba/abajo, 15px izquierda/derecha) */
+    border-radius: 5px; /* Redondea las esquinas del botón */
+    cursor: pointer; /* Cambia el cursor a una mano al pasar sobre el botón */
+}
+
+/* Estilo para el botón al pasar el mouse */
+button:hover {
+    background-color: #2c7a7b; /* Mantiene el mismo color al pasar el mouse */
+}
+
+/* Estilo para la tabla */
+table {
+    width: 100%; /* Hace que la tabla ocupe el 100% del ancho disponible */
+    border-collapse: collapse; /* Elimina los espacios entre los bordes de las celdas */
+    margin-top: 20px; /* Agrega un margen superior de 20px */
+}
+
+/* Estilo para las celdas y encabezados de la tabla */
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 10px; /* Agrega espacio interno de 10px dentro de las celdas */
+    text-align: center; /* Centra el contenido dentro de las celdas */
+}
+
+/* Estilo para los encabezados de la tabla */
+table th {
+    background-color: #2c7a7b; 
+    color: white; 
+}
+
+/* Estilo para los modales */
+.modal {
+    display: none; /* Oculta el modal por defecto */
+    position: fixed; /* Fija el modal en la pantalla, independientemente del scroll */
+    top: 50%; /* Posiciona el modal en el centro vertical de la pantalla */
+    left: 50%; /* Posiciona el modal en el centro horizontal de la pantalla */
+    transform: translate(-50%, -50%); /* Ajusta el modal para que esté perfectamente centrado */
+    background: white;
+    padding: 20px; /* Agrega espacio interno de 20px dentro del modal */
+    border-radius: 8px; /* Redondea las esquinas del modal */
+    z-index: 1000; /* Coloca el modal por encima de otros elementos */
+    width: 90%; /* Hace que el modal ocupe el 90% del ancho de la pantalla */
+    max-width: 400px; /* Limita el ancho máximo del modal a 400px */
+}
+
+/* Estilo para mostrar el modal cuando está activo */
+.modal.active {
+    display: block; /* Hace visible el modal cuando tiene la clase "active" */
+}
+
+/* Fondo oscuro (overlay) */
+.fondo-oscuro {
+    display: none; /* Oculta el fondo oscuro por defecto */
+    position: fixed; /* Fija el fondo oscuro en la pantalla */
+    top: 0; /* Posiciona el fondo oscuro en la parte superior de la pantalla */
+    left: 0; /* Posiciona el fondo oscuro en la parte izquierda de la pantalla */
+    width: 100%; /* Hace que el fondo oscuro cubra todo el ancho de la pantalla */
+    height: 100%; /* Hace que el fondo oscuro cubra todo el alto de la pantalla */
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 999; /* Coloca el fondo oscuro justo debajo del modal */
+}
+
+/* Estilo para mostrar el fondo oscuro cuando está activo */
+.fondo-oscuro.active {
+    display: block; /* Hace visible el fondo oscuro cuando tiene la clase "active" */
+}

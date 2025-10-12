@@ -1,0 +1,49 @@
+/* --- Estructura básica --- */
+body {
+  margin: 0; 
+  display: flex; /* hace que el sidebar quede a la izquierda y el contenido a la derecha */
+  font-family: Arial, sans-serif;
+}
+
+/* --- Menú lateral --- */
+.sidebar {
+  width: 200px;        /* ancho fijo */
+  height: 100vh;       /* ocupa toda la altura de la pantalla */
+  background: #2c7a7b; /* color de fondo oscuro */
+  color: white;
+  padding: 20px;
+  position: fixed;     /* fijo en el lado izquierdo */
+}
+
+.sidebar h2 {
+  text-align: center;  /* centramos el título */
+  margin-bottom: 20px;
+}
+
+/* lista sin viñetas */
+.sidebar ul {
+  list-style: none; 
+  padding: 0;
+  margin: 0;
+}
+
+/* cada opción del menú */
+.sidebar li {
+  margin: 10px 0; /* espacio entre links */
+}
+
+/* los enlaces del menú */
+.sidebar a {
+  color: white; 
+  text-decoration: none; /* quitar subrayado */
+  display: block;        /* ocupa todo el ancho */
+  padding: 8px;
+}
+
+/* --- Contenido principal --- */
+.contenido {
+  margin-left: 250px; /* deja espacio para el sidebar */
+  padding: 20px;
+  flex: 1;
+  background: #f4f4f9;
+}

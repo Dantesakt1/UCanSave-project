@@ -1,0 +1,77 @@
+body {
+            font-family: Arial, sans-serif; 
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        /* Estilo para los encabezados */
+        h1 {
+            color: #333;
+            text-align: center; /* Centrar el texto */
+        }
+
+        /* Estilo para los botones */
+        button {
+            background-color: #2c7a7b; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; /* Espaciado interno */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cambia el cursor a "mano" */
+        }
+
+        button:hover {
+            background-color: #2c7a7b; /* Cambia el color al pasar el mouse */
+        }
+
+        /* Estilo para la tabla */
+        table {
+            width: 100%; /* Ocupa todo el ancho disponible */
+            border-collapse: collapse; /* Une los bordes de las celdas */
+            margin-top: 20px; /* Espaciado superior */
+        }
+
+        table th, table td {
+            border: 1px solid #ddd; 
+            padding: 10px; /* Espaciado interno */
+            text-align: center; /* Centra el contenido */
+        }
+
+        table th {
+            background-color: #2c7a7b; 
+            color: white; 
+        }
+
+        /* Estilo para los modales */
+        .modal {
+            display: none; /* Oculta el modal por defecto */
+            position: fixed; /* Posición fija en la pantalla */
+            top: 50%; /* Centrado vertical */
+            left: 50%; /* Centrado horizontal */
+            transform: translate(-50%, -50%); /* Ajusta el centrado */
+            background: white;
+            padding: 20px; /* Espaciado interno */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000; /* Coloca el modal encima de otros elementos */
+        }
+
+        .modal.active {
+            display: block; /* Muestra el modal cuando está activo */
+        }
+
+        /* Estilo para el fondo oscuro (overlay) */
+        .fondo-oscuro {
+            display: none; /* Oculto por defecto */
+            position: fixed; /* Cubre toda la pantalla */
+            top: 0;
+            left: 0;
+            width: 100%; /* Ancho completo */
+            height: 100%; /* Alto completo */
+            background: rgba(0, 0, 0, 0.5); 
+            z-index: 999; /* Debajo del modal */
+        }
+
+        .fondo-oscuro.active {
+            display: block; /* Muestra el fondo oscuro cuando está activo */
+        }

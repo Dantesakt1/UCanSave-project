@@ -1,0 +1,111 @@
+/* Mensajes de error y estados de campos */
+.mensaje-error {
+    color: #d32f2f;
+    font-size: 13px;
+    margin-top: -6px;
+    margin-bottom: 4px;
+    display: block;
+    min-height: 18px;
+    text-align: left;
+}
+
+.input-formulario.error {
+    border-color: #d32f2f;
+    background: #fff0f0;
+}
+
+.input-formulario.valido {
+    border-color: #44b699;
+    background: #f0fff7;
+}
+@import url(estilo.css);
+/* contexto y formulario */
+.seccion-postulacion {
+    max-width: 900px;
+    margin: 40px auto 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(44, 122, 123, 0.08);
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.seccion-postulacion h2 {
+    color: #2c7a7b;
+    font-family: 'SFCompactRoundedBold';
+    margin-bottom: 12px;
+}
+
+.seccion-postulacion p {
+    color: #333;
+    font-size: 17px;
+    margin-bottom: 0;
+}
+
+.seccion-postulacion hr {
+    border: none;
+    border-top: 2px solid #2c7a7b;
+    margin: 30px 0;
+}
+
+/* Formulario de postulación */
+.contenedor-formulario {
+    max-width: 900px;
+    margin: 24px auto 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(44, 122, 123, 0.08);
+    padding: 32px 24px;
+}
+
+.formulario-postulacion {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.etiqueta-formulario {
+    font-family: 'SFCompactRoundedBold';
+    color: #2c7a7b;
+    margin-bottom: 6px;
+    display: block;
+    font-size: 15px;
+}
+
+.input-formulario {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'SFCompactRounded';
+    margin-top: 4px;
+    margin-bottom: 8px;
+    background: #f7fafc;
+    transition: border-color 0.2s;
+}
+
+.input-formulario:focus {
+    border-color: #2c7a7b;
+    outline: none;
+}
+
+.boton-formulario {
+    background: linear-gradient(135deg, #44b699, #068d70);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-family: 'SFCompactRoundedBold';
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0px 4px 8px rgba(44, 122, 123, 0.15);
+    margin-top: 10px;
+}
+
+.boton-formulario:hover {
+    background: linear-gradient(135deg, #0f7564, #075541);
+    transform: scale(1.04);
+}

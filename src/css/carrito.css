@@ -1,0 +1,91 @@
+/* Importa los estilos generales */
+@import url("estilo.css");
+
+/* ======== ENCABEZADO DEL CARRITO ======== */
+main h1 {
+    color: #2c7a7b;
+    font-size: 30px;
+    margin-bottom: 12px;
+    font-family: 'SFCompactRoundedBold';
+    text-align: center;
+}
+
+main hr {
+    border: none;
+    border-top: 3px solid #2c7a7b;
+    margin: 20px auto 30px;
+    width: 60%;
+}
+
+/* ======== TABLA DEL CARRITO ======== */
+#detalle {
+    display: flex;
+    justify-content: center;
+}
+
+#detalle table {
+    width: 80%;              /* la tabla ocupará solo el 80% del contenedor */
+    max-width: 1000px;       /* evita que se haga demasiado ancha */
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    margin: 0 auto 30px;
+}
+
+#detalle th,
+#detalle td {
+    padding: 14px 18px;
+    text-align: center;
+    font-size: 15px;
+}
+
+#detalle th {
+    background: linear-gradient(135deg, #2c7a7b, #075541);
+    color: white;
+    font-family: 'SFCompactRoundedBold';
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+
+#detalle tr:nth-child(even) {
+    background-color: #f7fafc;
+}
+
+#detalle tr:hover td {
+    background-color: #e6f6f5;
+    transition: background 0.3s ease;
+}
+
+#detalle td img {
+    border-radius: 10px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+    max-width: 120px;
+    height: auto;
+    transition: transform 0.3s;
+}
+
+#detalle td img:hover {
+    transform: scale(1.05);
+}
+
+/* ======== BOTÓN ELIMINAR ======== */
+input[type="button"] {
+    background-color: #e63946;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'SFCompactRoundedBold';
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+}
+
+input[type="button"]:hover {
+    background-color: #b81e2a;
+    transform: scale(1.08);
+}
