@@ -15,7 +15,7 @@ function Navbar() {
                    {/* nav links */}
                     <ul className="nav-menu">
                         <li className="nav-item">
-                            <a href="" className="nav-link">Inicio</a>
+                            <a href="/" className="nav-link">Inicio</a>
                         </li>
                         <li className="nav-item">
                             <a href="#escena" className="nav-link">Sobre nosotros</a>
