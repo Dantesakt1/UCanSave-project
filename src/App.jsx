@@ -5,21 +5,23 @@ import Navbar from './pages/Navbar'
 import Footer from './pages/Footer'
 import Menu from './pages/Menu'
 
-import { Route,Routes,BrowserRouter as Router } from 'react-router-dom'
+import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
 
 function App() {
 
   return (
     <>
-      <Navbar/>
-      <Footer/>
+      <Navbar />
+
       <Router>
         <Routes>
           {/* Rutas y componentes aquí */}
-          <Route path='/' element={<Menu/>}/>
+          <Route path='/' element={<Menu />} />
         </Routes>
       </Router>
+
+      <Footer />
     </>
   )
 }
