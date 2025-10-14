@@ -2,14 +2,14 @@
 /*esto es para el font q le pusimos extra*/
 @font-face {
     font-family: 'SFCompactRounded';
-    src: url('../fonts/SF-Compact-Rounded-Regular.otf') format('truetype');
+    src: url('/fonts/SF-Compact-Rounded-Regular.otf') format('truetype');
     font-weight: 400; /* Normal */
     font-style: normal;
     font-display: swap; /* Mejora rendimiento */
 }
 @font-face {
     font-family: 'SFCompactRoundedBold';
-    src: url('../fonts/SF-Compact-Rounded-Bold.otf') format('truetype');
+    src: url('/fonts/SF-Compact-Rounded-Bold.otf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -149,8 +149,9 @@
 #escena {
   display: flex;
   align-items: center;
-  justify-content: left;
-  width: 900px;
+  justify-content: center; /* cambiado de left a center */
+  width: 90%; /* cambiado de 900px fijo a responsive */
+  max-width: 1200px; /* añadir un máximo */
   height: 400px;
   margin: 80px auto;
   background-color: #fff;
@@ -163,7 +164,8 @@
 #zona-izquierda {
   background: #fff;
   height: 75%;
-  width: 300px;
+  width: 25%; /* cambiado de 300px a porcentaje */
+  min-width: 250px; /* añadir un mínimo */
   display: flex;
   align-items: center;
 }
@@ -198,11 +200,11 @@
 
 .item .contenido {
   position: absolute;
-  left: 300px;
+  left: 25%; /* cambiado de 300px a porcentaje */
   top: 50%;
   transform: translateY(-50%);
-  width: 600px;
-  height: auto;   /* ya no fuerzas altura */
+  width: 70%; /* cambiado de 600px a porcentaje */
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -220,7 +222,7 @@
 }
 
 .item .contenido p {
-  max-width: 70%;
+  max-width: 90%; 
 }
 
 .item input[type="radio"]:checked ~ label {
@@ -240,7 +242,8 @@
 }
 
 #zona-derecha {
-  flex-grow: 1;
+  flex: 1;
+  height: 75%;
   background: #fff;
 }
 
