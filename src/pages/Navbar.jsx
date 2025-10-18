@@ -27,7 +27,7 @@ function Navbar() {
                             <a href="noticias.html" className="nav-link">Noticias</a>
                         </li>
                         <li className="nav-item">
-                            <a href="formulario.html" className="nav-link">Formulario</a>
+                            <a href="/formulario" className="nav-link">Formulario</a>
                         </li>
                     </ul>
 
