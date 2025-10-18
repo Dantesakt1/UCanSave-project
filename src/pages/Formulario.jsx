@@ -10,7 +10,20 @@ function Formulario() {
 
     const enviarForm = (e) => {
         e.preventDefault();
-        // aquí puedes enviar por fetch/FormData si quieres subir el CV
+
+        const errores = [];
+        if (!nombre.trim()) errores.push("Nombre es requerido.");
+        if (!correo.trim()) errores.push("Correo es requerido.");
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) errores.push("Correo inválido.");
+        if (!experiencia || !experiencia.trim()) errores.push("Selecciona años de experiencia.");
+        if (!descripcion.trim()) errores.push("Cuéntanos algo sobre ti.");
+        if (!cv) errores.push("Adjunta tu CV.");
+
+        if (errores.length) {
+            setRespuesta(errores.join(" "));
+            return;
+        }
+
         console.log({ nombre, correo, experiencia, descripcion, cv });
         setRespuesta(`Gracias ${nombre || "postulante"}, tu postulación fue enviada.`);
 
@@ -19,8 +32,8 @@ function Formulario() {
         setExperiencia('Menos de un año');
         setDescripcion('');
         setCv(null);
-        e.target.reset();    
-    };
+        e.target.reset();
+    }
 
     return (
         <main>
@@ -32,22 +45,22 @@ function Formulario() {
                     difusión, gestión o trabajo directo con santuarios y animales rescatados.
                 </p>
                 <hr />
-                <form onSubmit={enviarForm} method="POST" encType="multipart/form-data" className="formulario-postulacion">
-                    <label>
+                <form onSubmit={enviarForm} className="formulario-postulacion">
+                    <label htmlFor="nombre">
                         <span className="etiqueta-formulario">Nombre completo</span>
-                        <input required name="nombre" type="text" className="input-formulario" placeholder="Ej: Juan Pérez"
+                        <input type="text" name="nombre" id="nombre" className="input-formulario" placeholder="Ej: Juan Pérez"
                             value={nombre} onChange={(e) => setNombre(e.target.value)} />
                     </label>
 
-                    <label>
+                    <label htmlFor="correo">
                         <span className="etiqueta-formulario">Correo electrónico</span>
-                        <input required name="correo" type="email" className="input-formulario" placeholder="ejemplo@correo.com"
+                        <input type="email" name="correo" id="correo" className="input-formulario" placeholder="ejemplo@correo.com"
                             value={correo} onChange={(e) => setCorreo(e.target.value)} />
                     </label>
 
-                    <label>
+                    <label htmlFor="experiencia">
                         <span className="etiqueta-formulario">Años de experiencia</span>
-                        <select required name="experiencia" className="input-formulario"
+                        <select name="experiencia" id="experiencia" className="input-formulario"
                             value={experiencia} onChange={(e) => setExperiencia(e.target.value)}>
                             <option>Menos de un año</option>
                             <option>1 - 2 años</option>
@@ -58,15 +71,15 @@ function Formulario() {
                         </select>
                     </label>
 
-                    <label>
+                    <label htmlFor="descripcion">
                         <span className="etiqueta-formulario">Cuéntanos más sobre ti</span>
-                        <textarea name="descripcion" className="input-formulario" rows="3" placeholder="¿Qué te motiva?"
+                        <textarea name="descripcion" id="descripcion" className="input-formulario" rows="3" placeholder="¿Qué te motiva?"
                             value={descripcion} onChange={(e) => setDescripcion(e.target.value)}></textarea>
                     </label>
 
-                    <label>
+                    <label htmlFor="cv">
                         <span className="etiqueta-formulario">Adjunta tu CV</span>
-                        <input required name="cv" type="file" className="input-formulario"
+                        <input name="cv" id="cv" type="file" className="input-formulario"
                             onChange={(e) => setCv(e.target.files && e.target.files[0] ? e.target.files[0] : null)} />
                     </label>
 
