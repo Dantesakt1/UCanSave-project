@@ -1,6 +1,3 @@
-import { Animal } from "./animal.js";
-import { ProductoAnimal } from "./productoAnimal.js";
-
 var animales = [
     new Animal(1, "Minga", 5000, "img/Lama guanicoe.jpeg", "Lama guanicoe", "Ungulado andino clave en los ecosistemas de altura."),
     new Animal(2, "Rumi", 5000, "img/Athene.jpg", "Athene cunicularia", "Búho terrestre que habita en madrigueras y es activo de día."),
@@ -74,4 +71,26 @@ function agregarAnimal(id) {
 
     document.getElementById("items").innerHTML = items;
     document.getElementById("total").innerHTML = total;
+}
+
+function renderCatalogo(){
+    const animales = JSON.parse(localStorage.getItem("animales")) || [];
+    const container = document.querySelector('.contenedor');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    animales.forEach(animal => {
+        const div = document.createElement('div');
+        div.className = 'ficha';
+        div.innerHTML = `
+            <img class="animal" src="${animal.imagen}" alt="${animal.especie}" width="200" height="150"/>
+            <h3>${animal.nombre}</h3>
+            <hr/>
+            <p>Especie: ${animal.especie} <br/> <br/> ${animal.descripcion}</p>
+            <p>⚠️ En peligro: ${animal.peligro || 'Información no disponible'}</p>
+            <p>${animal.historia || ''}</p>
+            <input type="button" value="Agregar" onclick="agregarAnimal(${animal.id})"/>
+        `;
+        container.appendChild(div);
+    });
 }

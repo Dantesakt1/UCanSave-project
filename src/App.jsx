@@ -5,6 +5,8 @@ import Navbar from './pages/Navbar'
 import Footer from './pages/Footer'
 import Menu from './pages/Menu'
 
+import Apadrinamiento from './pages/Apadrinamiento'
+
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 
 
@@ -18,6 +20,7 @@ function App() {
         <Routes>
           {/* Rutas y componentes aquí */}
           <Route path='/' element={<Menu />} />
+          <Route path='/apadrinamiento' element={<Apadrinamiento/>} />
         </Routes>
       </Router>
 

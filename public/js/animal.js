@@ -1,4 +1,4 @@
-export class Animal {
+class Animal {
     id;
     nombre;
     precio;

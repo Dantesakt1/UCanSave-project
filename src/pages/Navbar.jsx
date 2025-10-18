@@ -33,7 +33,7 @@ function Navbar() {
 
                     {/* BOTON */}
                     <div className="nav-btn">
-                        <a href="apadrinamiento.html" className="btn-apadrina">Apadrina</a>
+                        <a href="/apadrinamiento" className="btn-apadrina">Apadrina</a>
                         <a href="login_register.html" className="btn-login_register">Login / Registro</a>
                     </div>
                 </div>

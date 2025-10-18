@@ -1,4 +1,4 @@
-export class ProductoAnimal {
+class ProductoAnimal {
     id;
     nombre;
     precio;
