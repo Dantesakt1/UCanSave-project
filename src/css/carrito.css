@@ -1,5 +1,4 @@
-/* Importa los estilos generales */
-@import url("estilo.css");
+@import url(estilo.css);
 
 /* ======== ENCABEZADO DEL CARRITO ======== */
 main h1 {

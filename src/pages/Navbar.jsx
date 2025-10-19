@@ -2,7 +2,6 @@ import '../css/estilo.css'
 
 function Navbar() {
     return (
-
         <header>
             <nav className="navbar">
                 <div className="contenedor-nav">
@@ -21,7 +20,7 @@ function Navbar() {
                             <a href="#escena" className="nav-link">Sobre nosotros</a>
                         </li>
                         <li className="nav-item">
-                            <a href="carrito.html" className="nav-link">Carrito</a>
+                            <a href="/carrito" className="nav-link">Carrito</a>
                         </li>
                         <li className="nav-item">
                             <a href="noticias.html" className="nav-link">Noticias</a>

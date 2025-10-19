@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 
+
 import '../css/apadrinamiento.css'
 
 const Apadrinamiento = () => {
+
     useEffect(() => {
         const scripts = [
             '/js/animal.js',
@@ -27,6 +29,7 @@ const Apadrinamiento = () => {
             }
         })
     }, [])
+
     return (
         <main>
             <section className="galeria">
