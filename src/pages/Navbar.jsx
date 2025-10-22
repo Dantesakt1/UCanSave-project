@@ -23,7 +23,7 @@ function Navbar() {
                             <a href="/carrito" className="nav-link">Carrito</a>
                         </li>
                         <li className="nav-item">
-                            <a href="noticias.html" className="nav-link">Noticias</a>
+                            <a href="/noticias" className="nav-link">Noticias</a>
                         </li>
                         <li className="nav-item">
                             <a href="/formulario" className="nav-link">Formulario</a>
@@ -33,7 +33,7 @@ function Navbar() {
                     {/* BOTON */}
                     <div className="nav-btn">
                         <a href="/apadrinamiento" className="btn-apadrina">Apadrina</a>
-                        <a href="login_register.html" className="btn-login_register">Login / Registro</a>
+                        <a href="/login-registro" className="btn-login_register">Login / Registro</a>
                     </div>
                 </div>
             </nav>

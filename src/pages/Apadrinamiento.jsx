@@ -34,7 +34,7 @@ const Apadrinamiento = () => {
         <main>
             <section className="galeria">
                 <h2>Apadrina algún animal !</h2>
-                <div className="contenedor">
+                <div className="vista">
 
                     {/* 1 */}
                     <div className="ficha">
