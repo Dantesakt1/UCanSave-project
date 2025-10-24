@@ -37,6 +37,10 @@ function Formulario() {
 
     return (
         <main>
+            <div className="accesorio-form">
+                <img src="/img/accesorio-form.png" alt="accesorio de postulacion" />
+            </div>
+
             <section className="seccion-postulacion">
                 <h2>¿Quieres ser parte de U Can Save?</h2>
                 <p>
