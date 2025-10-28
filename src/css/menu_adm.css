@@ -47,3 +47,22 @@ body {
   flex: 1;
   background: #f4f4f9;
 }
+
+/* Estilo para el botón de Cerrar Sesión en el Sidebar */
+.logout-button {
+    background: none; 
+    border: none; 
+    color: white;
+    padding: 8px; /* Mismo padding que los enlaces <a> */
+    text-align: left; 
+    width: 100%;
+    cursor: pointer; 
+    font-size: inherit; /* Usa el tamaño de fuente del sidebar */
+    font-family: inherit; /* Usa la fuente del sidebar */
+    display: block; /* Asegura que ocupe todo el ancho */
+}
+
+.logout-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Efecto hover sutil */
+    border-radius: 4px; /* Opcional: redondear al pasar el mouse */
+}

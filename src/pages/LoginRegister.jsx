@@ -107,7 +107,7 @@ function LoginRegister() {
         // Caso 1: ADMIN (Credenciales Fijas)
         if (loginEmail === adminEmail && loginPassword === adminPassword) {
             displayMessage('success', 'Inicio de sesión (ADMIN) exitoso. Redirigiendo...');
-            setTimeout(() => navigate('/menu_admin'), 500); 
+            setTimeout(() => navigate('/menu-admin'), 500); 
         } 
         // Caso 2: USUARIO NORMAL (Cualquier cuenta con dominio válido)
         else if (validateEmail(loginEmail)) {

@@ -13,6 +13,9 @@ import Noticia_2 from './pages/Noticia_2'
 import Noticia_1 from './pages/Noticia_1'
 import LoginRegister from './pages/LoginRegister'
 import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
+import MenuAdmin from './pages/MenuAdmin'
+import AdminAnimales from './pages/AdminAnimales'
+import AdminUsuarios from './pages/AdminUsuarios'
 
 
 
@@ -20,6 +23,7 @@ function App() {
 
   return (
     <>
+
       <Navbar />
 
       <Router>
@@ -33,6 +37,9 @@ function App() {
           <Route path='/noticia/1' element={<Noticia_1/>}/>
           <Route path='/noticia/2' element={<Noticia_2/>}/>
           <Route path='/login-registro' element={<LoginRegister/>}/>
+          <Route path='/menu-admin' element={<MenuAdmin/>}/>
+          <Route path='/admin-animales' element={<AdminAnimales/>}/>
+          <Route path='/admin-usuarios' element={<AdminUsuarios/>}/>
         </Routes>
       </Router>
 
