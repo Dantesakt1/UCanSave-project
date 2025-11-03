@@ -9,44 +9,79 @@ function AdminAnimales() {
   const [nuevoAnimal, setNuevoAnimal] = useState({
     nombre: '',
     especie: '',
-    descripcion: '',
-    precio: '',
-    imagen: ''
+    peligro: '',
+    rescate: '',
+    img: ''
   });
 
   useEffect(() => {
-    const animalesGuardados = JSON.parse(localStorage.getItem("animales")) || [];
-    setAnimales(animalesGuardados);
-  }, []);
+    const animalesGuardados = localStorage.getItem("listaAnimales");
+    let animalesParaCargar = [];
 
+    if (animalesGuardados && JSON.parse(animalesGuardados).length > 0) {
+      animalesParaCargar = JSON.parse(animalesGuardados);
+    } else if (window.listaAnimalesInicial) {
+      // Si no hay nada en localStorage, usa la lista inicial y guárdala.
+      animalesParaCargar = window.listaAnimalesInicial;
+      localStorage.setItem("listaAnimales", JSON.stringify(animalesParaCargar));
+    }
+    
+    setAnimales(animalesParaCargar);
+
+    // Cargar el script que define `listaAnimalesInicial` si no está presente
+    const scriptSrc = '/js/productoAnimal.js';
+    if (!document.querySelector(`script[src="${scriptSrc}"]`)) {
+        const sc = document.createElement('script');
+        sc.src = scriptSrc;
+        sc.async = true;
+        sc.onload = () => {
+            // Re-evaluar en caso de que el script cargue después del primer chequeo
+            if (JSON.parse(localStorage.getItem("listaAnimales") || "[]").length === 0) {
+                const animalesIniciales = window.listaAnimalesInicial || [];
+                localStorage.setItem("listaAnimales", JSON.stringify(animalesIniciales));
+                setAnimales(animalesIniciales);
+            }
+        };
+        document.body.appendChild(sc);
+    }
+  }, [])
+
+  // Función central para guardar en estado y localStorage
   const guardarAnimales = (nuevosAnimales) => {
-    localStorage.setItem("animales", JSON.stringify(nuevosAnimales));
+    localStorage.setItem("listaAnimales", JSON.stringify(nuevosAnimales));
     setAnimales(nuevosAnimales);
   };
 
   const handleSubmitAgregar = (e) => {
     e.preventDefault();
-    const nuevoId = animales.length > 0 ? animales[animales.length - 1].id + 1 : 1;
-    const animalConId = { ...nuevoAnimal, id: nuevoId };
+    // Usamos Date.now() para un ID único y simple
+    const animalConId = { ...nuevoAnimal, id: Date.now() };
     const nuevosAnimales = [...animales, animalConId];
     guardarAnimales(nuevosAnimales);
     setModalAgregar(false);
-    setNuevoAnimal({ nombre: '', especie: '', descripcion: '', precio: '', imagen: '' });
+    setNuevoAnimal({ nombre: '', especie: '', peligro: '', rescate: '', img: '' });
   };
 
   const handleSubmitEditar = (e) => {
     e.preventDefault();
-    const nuevosAnimales = animales.map((animal, idx) => 
-      idx === animalEditando.index ? { ...animalEditando.animal } : animal
+    const nuevosAnimales = animales.map((animal) => 
+      animal.id === animalEditando.animal.id ? animalEditando.animal : animal
     );
     guardarAnimales(nuevosAnimales);
     setModalEditar(false);
     setAnimalEditando(null);
   };
 
-  const abrirModalEditar = (animal, index) => {
-    setAnimalEditando({ animal: {...animal}, index });
+  const abrirModalEditar = (animal) => {
+    setAnimalEditando({ animal: {...animal} });
     setModalEditar(true);
+  };
+
+  const eliminarAnimal = (id) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este animal?")) {
+        const nuevosAnimales = animales.filter(animal => animal.id !== id);
+        guardarAnimales(nuevosAnimales);
+    }
   };
 
   return (
@@ -55,8 +90,7 @@ function AdminAnimales() {
         <nav className="sidebar">
             <br />
             <br />
-            
-          <h2></h2>
+          <h2>Admin</h2>
           <ul>
             <li><Link to="/menu-admin">Inicio</Link></li>
             <li><Link to="/admin-animales">Animales</Link></li>
@@ -64,147 +98,89 @@ function AdminAnimales() {
           </ul>
           <hr />
           <ul>
-            <li><Link to="/menu">Cerrar Sesión</Link></li>
+            <li><Link to="/">Cerrar Sesión</Link></li>
           </ul>
         </nav>
       </header>
 
       <main className="contenido">
-                    <br />
-            <br />
-            <br />
+        <br />
+        <br />
+        <br />
         <h1>¡Animales!</h1>
-        <p>Aquí puedes administrar los animales</p>
+        <p>Aquí puedes administrar los animales para apadrinamiento.</p>
 
-        <button onClick={() => setModalAgregar(true)}>Agregar Animal</button>
+        <button className="btn-agregar" onClick={() => setModalAgregar(true)}>Agregar Animal</button>
 
         <table id="tablaAnimales">
           <thead>
             <tr>
               <th>Nombre</th>
               <th>Especie</th>
-              <th>Descripción</th>
-              <th>Precio</th>
               <th>Imagen</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {animales.map((animal, index) => (
+            {animales.map((animal) => (
               <tr key={animal.id}>
                 <td>{animal.nombre}</td>
                 <td>{animal.especie}</td>
-                <td>{animal.descripcion}</td>
-                <td>${animal.precio}</td>
-                <td><img src={animal.imagen} width={100} alt={animal.nombre} /></td>
+                <td><img src={animal.img} width={100} alt={animal.nombre} /></td>
                 <td>
-                  <button onClick={() => abrirModalEditar(animal, index)}>Editar</button>
+                  <button className="btn-editar" onClick={() => abrirModalEditar(animal)}>Editar</button>
+                  <button className="btn-eliminar" onClick={() => eliminarAnimal(animal.id)}>Eliminar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
+        {/* MODAL PARA AGREGAR */}
         {modalAgregar && (
           <div className="modal" style={{display: 'block'}}>
-            <h2>Agregar Animal</h2>
-            <form onSubmit={handleSubmitAgregar}>
-              <label>Nombre:</label>
-              <input 
-                type="text" 
-                required 
-                value={nuevoAnimal.nombre}
-                onChange={(e) => setNuevoAnimal({...nuevoAnimal, nombre: e.target.value})}
-              /><br/>
-              <label>Especie:</label>
-              <input 
-                type="text" 
-                required
-                value={nuevoAnimal.especie}
-                onChange={(e) => setNuevoAnimal({...nuevoAnimal, especie: e.target.value})}
-              /><br/>
-              <label>Descripción:</label>
-              <textarea 
-                required
-                value={nuevoAnimal.descripcion}
-                onChange={(e) => setNuevoAnimal({...nuevoAnimal, descripcion: e.target.value})}
-              ></textarea><br/>
-              <label>Precio:</label>
-              <input 
-                type="number" 
-                required
-                value={nuevoAnimal.precio}
-                onChange={(e) => setNuevoAnimal({...nuevoAnimal, precio: e.target.value})}
-              /><br/>
-              <label>Imagen (URL):</label>
-              <input 
-                type="text" 
-                required
-                value={nuevoAnimal.imagen}
-                onChange={(e) => setNuevoAnimal({...nuevoAnimal, imagen: e.target.value})}
-              /><br/>
-              <button type="button" onClick={() => setModalAgregar(false)}>Cancelar</button>
-              <button type="submit">Guardar</button>
-            </form>
+            <div className="modal-contenido">
+              <span className="cerrar" onClick={() => setModalAgregar(false)}>&times;</span>
+              <h2>Agregar Animal</h2>
+              <form onSubmit={handleSubmitAgregar}>
+                <label>Nombre:</label>
+                <input type="text" required value={nuevoAnimal.nombre} onChange={(e) => setNuevoAnimal({...nuevoAnimal, nombre: e.target.value})} />
+                <label>Especie:</label>
+                <input type="text" required value={nuevoAnimal.especie} onChange={(e) => setNuevoAnimal({...nuevoAnimal, especie: e.target.value})} />
+                <label>Peligro:</label>
+                <textarea required value={nuevoAnimal.peligro} onChange={(e) => setNuevoAnimal({...nuevoAnimal, peligro: e.target.value})}></textarea>
+                <label>Rescate:</label>
+                <textarea required value={nuevoAnimal.rescate} onChange={(e) => setNuevoAnimal({...nuevoAnimal, rescate: e.target.value})}></textarea>
+                <label>Imagen (URL):</label>
+                <input type="text" required value={nuevoAnimal.img} onChange={(e) => setNuevoAnimal({...nuevoAnimal, img: e.target.value})} />
+                <button type="button" onClick={() => setModalAgregar(false)}>Cancelar</button>
+                <button type="submit">Guardar</button>
+              </form>
+            </div>
           </div>
         )}
 
+        {/* MODAL PARA EDITAR */}
         {modalEditar && animalEditando && (
           <div className="modal" style={{display: 'block'}}>
-            <h2>Editar Animal</h2>
-            <form onSubmit={handleSubmitEditar}>
-              <label>Nombre:</label>
-              <input 
-                type="text" 
-                required
-                value={animalEditando.animal.nombre}
-                onChange={(e) => setAnimalEditando({
-                  ...animalEditando,
-                  animal: {...animalEditando.animal, nombre: e.target.value}
-                })}
-              /><br/>
-              <label>Especie:</label>
-              <input 
-                type="text" 
-                required
-                value={animalEditando.animal.especie}
-                onChange={(e) => setAnimalEditando({
-                  ...animalEditando,
-                  animal: {...animalEditando.animal, especie: e.target.value}
-                })}
-              /><br/>
-              <label>Descripción:</label>
-              <textarea 
-                required
-                value={animalEditando.animal.descripcion}
-                onChange={(e) => setAnimalEditando({
-                  ...animalEditando,
-                  animal: {...animalEditando.animal, descripcion: e.target.value}
-                })}
-              ></textarea><br/>
-              <label>Precio:</label>
-              <input 
-                type="number" 
-                required
-                value={animalEditando.animal.precio}
-                onChange={(e) => setAnimalEditando({
-                  ...animalEditando,
-                  animal: {...animalEditando.animal, precio: e.target.value}
-                })}
-              /><br/>
-              <label>Imagen (URL):</label>
-              <input 
-                type="text" 
-                required
-                value={animalEditando.animal.imagen}
-                onChange={(e) => setAnimalEditando({
-                  ...animalEditando,
-                  animal: {...animalEditando.animal, imagen: e.target.value}
-                })}
-              /><br/>
-              <button type="button" onClick={() => setModalEditar(false)}>Cancelar</button>
-              <button type="submit">Guardar</button>
-            </form>
+             <div className="modal-contenido">
+              <span className="cerrar" onClick={() => setModalEditar(false)}>&times;</span>
+              <h2>Editar Animal</h2>
+              <form onSubmit={handleSubmitEditar}>
+                <label>Nombre:</label>
+                <input type="text" required value={animalEditando.animal.nombre} onChange={(e) => setAnimalEditando({...animalEditando, animal: {...animalEditando.animal, nombre: e.target.value}})} />
+                <label>Especie:</label>
+                <input type="text" required value={animalEditando.animal.especie} onChange={(e) => setAnimalEditando({...animalEditando, animal: {...animalEditando.animal, especie: e.target.value}})} />
+                <label>Peligro:</label>
+                <textarea required value={animalEditando.animal.peligro} onChange={(e) => setAnimalEditando({...animalEditando, animal: {...animalEditando.animal, peligro: e.target.value}})}></textarea>
+                <label>Rescate:</label>
+                <textarea required value={animalEditando.animal.rescate} onChange={(e) => setAnimalEditando({...animalEditando, animal: {...animalEditando.animal, rescate: e.target.value}})}></textarea>
+                <label>Imagen (URL):</label>
+                <input type="text" required value={animalEditando.animal.img} onChange={(e) => setAnimalEditando({...animalEditando, animal: {...animalEditando.animal, img: e.target.value}})} />
+                <button type="button" onClick={() => setModalEditar(false)}>Cancelar</button>
+                <button type="submit">Guardar</button>
+              </form>
+            </div>
           </div>
         )}
       </main>

@@ -1,96 +1,98 @@
-var animales = [
-    new Animal(1, "Minga", 5000, "img/Lama guanicoe.jpeg", "Lama guanicoe", "Ungulado andino clave en los ecosistemas de altura."),
-    new Animal(2, "Rumi", 5000, "img/Athene.jpg", "Athene cunicularia", "Búho terrestre que habita en madrigueras y es activo de día."),
-    new Animal(3, "Lycan", 5000, "img/Lycalopex.jpg", "Lycalopex griseus", "Cánido pequeño que ayuda a controlar plagas de roedores."),
-    new Animal(4, "Huilo", 5000, "img/Puma concolor.jpg", "Puma concolor", "Gran felino sudamericano, depredador tope en la cadena trófica."),
-    new Animal(5, "Terra", 5000, "img/Parabuteo.jpg", "Parabuteo unicinctus", "Ave rapaz social, poco común entre halcones, suele cazar en grupo."),
-    new Animal(6, "Luna", 5000, "img/Phocoena.jpeg", "Phocoena sinus", "La marsopa más pequeña del mundo, endémica del golfo de California."),
-    new Animal(7, "Nieve", 5000, "img/Beluga.jpg", "Delphinapterus leucas", "Cetáceo blanco del Ártico, muy social y comunicativo."),
-    new Animal(8, "Spike", 5000, "img/Narval.jpg", "Monodon monoceros", "Ballena dentada famosa por su largo colmillo en espiral."),
-    new Animal(9, "Chilly", 5000, "img/Pingüino de Humboldt.webp", "Spheniscus humboldti", "Pingüino costero del norte de Chile y Perú.")
-];
-
-localStorage.setItem("animales", JSON.stringify(animales));
+// NO HAY LISTA DE ANIMALES AQUÍ. La fuente de datos es localStorage.
 
 function agregarAnimal(id) {
-    console.log("Selecciono:" + id);
-    const data = JSON.parse(localStorage.getItem("animales"));
+    console.log("Agregando al carrito el animal con ID:" + id);
+    // Leemos la lista correcta desde localStorage
+    const data = JSON.parse(localStorage.getItem("listaAnimales"));
+    if (!data) {
+        console.error("No se encontró la lista de animales en localStorage.");
+        return;
+    }
 
-    console.log(data[id - 1]);
-    console.log(data[id - 1]["nombre"]);
+    // Buscamos el animal por su ID
+    const animalSeleccionado = data.find(animal => animal.id === id);
+    if (!animalSeleccionado) {
+        console.error("No se encontró el animal con ID " + id);
+        return;
+    }
 
-    // Crear nuevo producto para el carrito
-    var animalCarro = new ProductoAnimal()
-    animalCarro.id = data[id - 1]["id"]
-    animalCarro.nombre = data[id - 1]["nombre"]
-    animalCarro.precio = data[id - 1]["precio"]
-    animalCarro.cantidad = 1
-    animalCarro.total = data[id - 1]["precio"]
-    animalCarro.imagen = data[id - 1]["imagen"]
+    // Creamos el producto para el carrito.
+    // NOTA: No tienes un precio en tus datos, así que lo pongo en 5000 como antes.
+    const animalCarro = {
+        id: animalSeleccionado.id,
+        nombre: animalSeleccionado.nombre,
+        precio: 5000, // Precio fijo o agrégalo a tus datos
+        cantidad: 1,
+        total: 5000,
+        imagen: animalSeleccionado.img
+    };
 
-    let nombre_animal = data[id - 1]["nombre"];
-
-    // contador arriba del carrito
-    var valor = parseInt(document.getElementById("pie").innerHTML);
+    // --- Lógica del carrito (esta parte parece estar bien) ---
+    var valor = parseInt(document.getElementById("pie").innerHTML) || 0;
     valor = valor + 1;
     document.getElementById("pie").innerHTML = valor;
 
     let items = 0;
     let total = 0;
+    var carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-    var carrito = JSON.parse(localStorage.getItem("carrito"));
-
-    if (!carrito) {
-        console.log("no existe");
-        carrito = [animalCarro];
-        items = 1;
-        total = animalCarro.precio;
-        localStorage.setItem("carrito", JSON.stringify(carrito))
-        console.log("Apadrinamiento agregado")
-    } else {
-        let existe = false;
-        carrito.forEach((item, idx) => {
-            if (item.id == animalCarro.id) {
-                carrito[idx].cantidad += 1;
-                carrito[idx].total = carrito[idx].precio * carrito[idx].cantidad;
-                existe = true;
-            }
-        });
-
-        if (!existe) {
-            carrito.push(animalCarro)
+    let existe = false;
+    carrito.forEach((item, idx) => {
+        if (item.id == animalCarro.id) {
+            carrito[idx].cantidad += 1;
+            carrito[idx].total = carrito[idx].precio * carrito[idx].cantidad;
+            existe = true;
         }
+    });
 
-        carrito.forEach(i => {
-            total += i.total;
-        })
-        items = carrito.length
-        localStorage.setItem("carrito", JSON.stringify(carrito))
-        console.log("Apadrinamiento agregado")
+    if (!existe) {
+        carrito.push(animalCarro);
     }
+
+    carrito.forEach(i => {
+        total += i.total;
+    });
+    items = carrito.length;
+
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    console.log("Apadrinamiento agregado/actualizado en el carrito.");
 
     document.getElementById("items").innerHTML = items;
     document.getElementById("total").innerHTML = total;
 }
 
-function renderCatalogo(){
-    const animales = JSON.parse(localStorage.getItem("animales")) || [];
-    const container = document.querySelector('.contenedor');
-    if (!container) return;
+// Esta es la función clave. Ahora SÍ usa los datos que recibe.
+function renderCatalogo(animales) {
+    // Busca el contenedor correcto por su ID
+    const container = document.getElementById('catalogo-animales');
+    if (!container) {
+        console.error('El contenedor con id "catalogo-animales" no fue encontrado.');
+        return;
+    }
     
-    container.innerHTML = '';
+    container.innerHTML = ''; // Limpia el contenido viejo
+
+    if (!animales || animales.length === 0) {
+        container.innerHTML = '<p>No hay animales disponibles para apadrinar en este momento.</p>';
+        return;
+    }
+
     animales.forEach(animal => {
         const div = document.createElement('div');
-        div.className = 'ficha';
+        div.className = 'ficha'; // La clase CSS para la tarjeta
         div.innerHTML = `
-            <img class="animal" src="${animal.imagen}" alt="${animal.especie}" width="200" height="150"/>
+            <img class="animal" src="${animal.img}" alt="${animal.nombre}"/>
             <h3>${animal.nombre}</h3>
             <hr/>
-            <p>Especie: ${animal.especie} <br/> <br/> ${animal.descripcion}</p>
-            <p>⚠️ En peligro: ${animal.peligro || 'Información no disponible'}</p>
-            <p>${animal.historia || ''}</p>
+            <p>Especie: ${animal.especie}</p>
+            <p>⚠️ En peligro: ${animal.peligro}</p>
+            <p>${animal.rescate}</p>
             <input type="button" value="Agregar" onclick="agregarAnimal(${animal.id})"/>
         `;
         container.appendChild(div);
     });
 }
+
+// Hacemos las funciones globales para que React pueda llamarlas
+window.renderCatalogo = renderCatalogo;
+window.agregarAnimal = agregarAnimal;
