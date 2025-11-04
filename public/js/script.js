@@ -1,4 +1,4 @@
-// NO HAY LISTA DE ANIMALES AQUÍ. La fuente de datos es localStorage.
+// NO HAY LISTA DE ANIMALES AQUÍ. La fuente de datos es localStorage y React.
 
 function agregarAnimal(id) {
     console.log("Agregando al carrito el animal con ID:" + id);
@@ -16,18 +16,20 @@ function agregarAnimal(id) {
         return;
     }
 
+    // Usar el precio del animal guardado (o 5000 si no existe)
+    const precioAnimal = animalSeleccionado.precio || 5000; 
+
     // Creamos el producto para el carrito.
-    // NOTA: No tienes un precio en tus datos, así que lo pongo en 5000 como antes.
     const animalCarro = {
         id: animalSeleccionado.id,
         nombre: animalSeleccionado.nombre,
-        precio: 5000, // Precio fijo o agrégalo a tus datos
+        precio: precioAnimal,
         cantidad: 1,
-        total: 5000,
+        total: precioAnimal,
         imagen: animalSeleccionado.img
     };
 
-    // --- Lógica del carrito (esta parte parece estar bien) ---
+    // --- Lógica del carrito ---
     var valor = parseInt(document.getElementById("pie").innerHTML) || 0;
     valor = valor + 1;
     document.getElementById("pie").innerHTML = valor;
@@ -57,29 +59,41 @@ function agregarAnimal(id) {
     localStorage.setItem("carrito", JSON.stringify(carrito));
     console.log("Apadrinamiento agregado/actualizado en el carrito.");
 
-    document.getElementById("items").innerHTML = items;
-    document.getElementById("total").innerHTML = total;
+    const itemsSpan = document.getElementById("items");
+    const totalSpan = document.getElementById("total");
+    if (itemsSpan) itemsSpan.innerHTML = items;
+    if (totalSpan) totalSpan.innerHTML = total;
 }
 
-// Esta es la función clave. Ahora SÍ usa los datos que recibe.
+// --- FUNCIÓN RENDERCATALOGO MODIFICADA ---
+// Acepta los animales (filtrados o no) que React le envía.
 function renderCatalogo(animales) {
-    // Busca el contenedor correcto por su ID
-    const container = document.getElementById('catalogo-animales');
+    
+    // Busca el contenedor (ID 'catalogo-animales' o clase 'vista')
+    // (Se usa 'let' para que no dé error al reasignar)
+    let container = document.getElementById('catalogo-animales'); 
     if (!container) {
-        console.error('El contenedor con id "catalogo-animales" no fue encontrado.');
-        return;
+        container = document.querySelector('.vista'); 
+        if (!container) {
+             console.error('El contenedor con id "catalogo-animales" o clase "vista" no fue encontrado.');
+             return;
+        }
     }
     
     container.innerHTML = ''; // Limpia el contenido viejo
 
+    // Verifica la lista recibida
     if (!animales || animales.length === 0) {
-        container.innerHTML = '<p>No hay animales disponibles para apadrinar en este momento.</p>';
+        container.innerHTML = '<p style="text-align: center; font-size: 1.2em;">No hay animales que coincidan con esta categoría.</p>';
         return;
     }
 
+    // Renderiza solo los animales filtrados que recibió
     animales.forEach(animal => {
         const div = document.createElement('div');
-        div.className = 'ficha'; // La clase CSS para la tarjeta
+        div.className = 'ficha'; 
+        const precioFormateado = (animal.precio || 5000).toLocaleString('es-CL');
+        
         div.innerHTML = `
             <img class="animal" src="${animal.img}" alt="${animal.nombre}"/>
             <h3>${animal.nombre}</h3>
@@ -87,6 +101,7 @@ function renderCatalogo(animales) {
             <p>Especie: ${animal.especie}</p>
             <p>⚠️ En peligro: ${animal.peligro}</p>
             <p>${animal.rescate}</p>
+            <p class="precio-ficha"><b>Apadrinamiento: $${precioFormateado} CLP</b></p> 
             <input type="button" value="Agregar" onclick="agregarAnimal(${animal.id})"/>
         `;
         container.appendChild(div);
