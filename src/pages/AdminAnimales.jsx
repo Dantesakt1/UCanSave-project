@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import '../css/animales.css';
+
 function AdminAnimales() {
   const [animales, setAnimales] = useState([]);
   const [modalAgregar, setModalAgregar] = useState(false);

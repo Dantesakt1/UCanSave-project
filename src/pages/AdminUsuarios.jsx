@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import '../css/usuarios.css';
+
 function AdminUsuarios() {
   const datosDePrueba = [
     { id: 1, rut: "11.111.111-1", nombre: "Juan Pérez", correo: "juanperez@mail.com", contraseña: "1234", repetirContraseña: "1234" },
