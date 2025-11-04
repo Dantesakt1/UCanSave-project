@@ -112,22 +112,22 @@ function AdminAnimales() {
 
   return (
     <>
-      <header>
+          <header>
         <nav className="sidebar">
-            <br /> <br />
-          <h2><img src="/img/logo.png" alt="logo U Can Save" width="150" height="150"/></h2>
+            <br />
+            <br />
+          <h2></h2>
           <ul>
-            <li><Link to="/menu_admin">Inicio</Link></li> 
-            <li><Link to="/admin/animales">Animales</Link></li>
-            <li><Link to="/admin/usuarios">Usuarios</Link></li>
+            <li><Link to="/menu-admin">Inicio</Link></li>
+            <li><Link to="/admin-animales">Animales</Link></li>
+            <li><Link to="/admin-usuarios">Usuarios</Link></li>
           </ul>
           <hr />
           <ul>
-            <li><Link to="/">Cerrar Sesión</Link></li>
+            <li><Link to="/menu">Cerrar Sesión</Link></li>
           </ul>
         </nav>
       </header>
-
       <main className="contenido">
         <br /> <br /> <br />
         <h1>¡Animales!</h1>
