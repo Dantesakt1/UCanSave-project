@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import '../css/menu_adm.css'; 
 import '../css/animales.css'; 
 
+import '../css/animales.css';
+
 function AdminAnimales() {
   const [animales, setAnimales] = useState([]);
   const [modalAgregar, setModalAgregar] = useState(false);

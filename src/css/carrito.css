@@ -1,4 +1,4 @@
-@import url(estilo.css);
+
 
 /* ======== ENCABEZADO DEL CARRITO ======== */
 main h1 {
@@ -88,6 +88,3 @@ input[type="button"]:hover {
     transform: scale(1.08);
 }
 
-main {
-    height: 100%;
-}

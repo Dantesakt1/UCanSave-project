@@ -1,6 +1,5 @@
 /* Estilo general para el cuerpo */
 body {
-    font-family: Arial, sans-serif; 
     margin: 0; /* Elimina los márgenes por defecto del cuerpo */
     padding: 0; /* Elimina el relleno por defecto del cuerpo */
     background-color: #f9f9f9;
