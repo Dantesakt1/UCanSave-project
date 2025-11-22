@@ -16,6 +16,10 @@ import { Route, Routes, BrowserRouter as Router } from 'react-router-dom'
 import MenuAdmin from './pages/MenuAdmin'
 import AdminAnimales from './pages/AdminAnimales'
 import AdminUsuarios from './pages/AdminUsuarios'
+import Checkout from './pages/checkout'
+import PagoExitoso from './pages/PagoExitoso'
+import PagoFallido from './pages/PagoFallido'
+import './css/pagos.css';
 
 
 
@@ -30,16 +34,21 @@ function App() {
         <Routes>
           {/* Rutas y componentes aquí */}
           <Route path='/' element={<Menu />} />
-          <Route path='/apadrinamiento' element={<Apadrinamiento/>} />
-          <Route path='/formulario' element={<Formulario/>} />
-          <Route path='/carrito' element={<Carrito/>}/>
-          <Route path='/noticias' element={<Noticias/>}/>
-          <Route path='/noticia/1' element={<Noticia_1/>}/>
-          <Route path='/noticia/2' element={<Noticia_2/>}/>
-          <Route path='/login-registro' element={<LoginRegister/>}/>
-          <Route path='/menu-admin' element={<MenuAdmin/>}/>
-          <Route path='/admin-animales' element={<AdminAnimales/>}/>
-          <Route path='/admin-usuarios' element={<AdminUsuarios/>}/>
+          <Route path='/apadrinamiento' element={<Apadrinamiento />} />
+          <Route path='/formulario' element={<Formulario />} />
+          <Route path='/carrito' element={<Carrito />} />
+          <Route path='/noticias' element={<Noticias />} />
+          <Route path='/noticia/1' element={<Noticia_1 />} />
+          <Route path='/noticia/2' element={<Noticia_2 />} />
+          <Route path='/login-registro' element={<LoginRegister />} />
+          <Route path='/menu-admin' element={<MenuAdmin />} />
+          <Route path='/admin-animales' element={<AdminAnimales />} />
+          <Route path='/admin-usuarios' element={<AdminUsuarios />} />
+          <Route path='/checkout' element={<Checkout />} />
+          <Route path='/pago-exitoso' element={<PagoExitoso />} />
+          <Route path='/pago-fallido' element={<PagoFallido />} />
+
+
         </Routes>
       </Router>
 

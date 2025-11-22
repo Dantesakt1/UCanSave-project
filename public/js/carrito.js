@@ -98,12 +98,8 @@ function comprarCarrito() {
         return;
     }
 
-    if (confirm("¿Desea realizar la compra?")) {
-        carrito = []; // Vaciar el carrito
-        guardarCarrito();
-        mostrarCarrito();
-        alert("¡Compra realizada con éxito!");
-    }
+    window.location.href = '/checkout';
+
 }
 
 // Inicializar la página mostrando el carrito
