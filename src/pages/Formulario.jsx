@@ -1,38 +1,86 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+// Importamos las funciones de tu archivo api_rest
+import { saveFormulario, getRangosExperiencia } from "../api_rest";
 
 function Formulario() {
+    // Estados del formulario
     const [nombre, setNombre] = useState("");
     const [correo, setCorreo] = useState("");
-    const [experiencia, setExperiencia] = useState("Menos de un año");
+    
+    const [listaRangos, setListaRangos] = useState([]);
+    const [experienciaId, setExperienciaId] = useState(""); 
+    
     const [descripcion, setDescripcion] = useState("");
     const [cv, setCv] = useState(null);
     const [respuesta, setRespuesta] = useState("");
 
-    const enviarForm = (e) => {
+    // Cargar los rangos de experiencia al iniciar
+    useEffect(() => {
+        const cargarDatos = async () => {
+            try {
+                const datos = await getRangosExperiencia();
+                setListaRangos(datos); 
+            } catch (error) {
+                console.error("Error al cargar rangos:", error);
+                setRespuesta("Error cargando opciones del servidor.");
+            }
+        };
+        cargarDatos();
+    }, []);
+
+    const enviarForm = async (e) => {
         e.preventDefault();
+        setRespuesta(""); 
 
         const errores = [];
         if (!nombre.trim()) errores.push("Nombre es requerido.");
         if (!correo.trim()) errores.push("Correo es requerido.");
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) errores.push("Correo inválido.");
-        if (!experiencia || !experiencia.trim()) errores.push("Selecciona años de experiencia.");
+        
+        if (!experienciaId) errores.push("Selecciona años de experiencia.");
         if (!descripcion.trim()) errores.push("Cuéntanos algo sobre ti.");
-        if (!cv) errores.push("Adjunta tu CV.");
 
         if (errores.length) {
             setRespuesta(errores.join(" "));
             return;
         }
 
-        console.log({ nombre, correo, experiencia, descripcion, cv });
-        setRespuesta(`Gracias ${nombre || "postulante"}, tu postulación fue enviada.`);
+        // OBJETO PARA ENVIAR A SPRING BOOT
+        const formularioDTO = {
+            nombreCompleto: nombre,       
+            correoElectronico: correo,    
+            motivacion: descripcion,      
+            urlCv: null,                  
+            
+            // 1. Rango de Experiencia (Seleccionado por el usuario)
+            rangoExperiencia: {
+                idRangoExperiencia: parseInt(experienciaId) 
+            },
 
-        setNombre('');
-        setCorreo('');
-        setExperiencia('Menos de un año');
-        setDescripcion('');
-        setCv(null);
-        e.target.reset();
+            // 2. Estado del Formulario (Automático: Siempre es "Pendiente" ID 1)
+            estadoFormulario: {
+                idEstadoFormulario: 1 
+            }
+        };
+
+        try {
+            console.log("Enviando payload:", formularioDTO);
+            await saveFormulario(formularioDTO);
+            
+            setRespuesta(`Gracias ${nombre}, tu postulación fue enviada con éxito.`);
+
+            // Limpiar campos
+            setNombre('');
+            setCorreo('');
+            setExperienciaId('');
+            setDescripcion('');
+            setCv(null);
+            e.target.reset();
+
+        } catch (error) {
+            console.error("Error al enviar formulario:", error);
+            setRespuesta("Hubo un error al guardar. Verifica que el Estado con ID 1 exista en la base de datos.");
+        }
     }
 
     return (
@@ -44,9 +92,7 @@ function Formulario() {
             <section className="seccion-postulacion">
                 <h2>¿Quieres ser parte de U Can Save?</h2>
                 <p>
-                    Si te apasiona la conservación animal y quieres aportar tus conocimientos o experiencia, ¡postula aquí
-                    para ser voluntario o colaborador! Buscamos personas comprometidas que deseen ayudar en áreas como tecnología,
-                    difusión, gestión o trabajo directo con santuarios y animales rescatados.
+                    Si te apasiona la conservación animal y quieres aportar tus conocimientos o experiencia, ¡postula aquí!
                 </p>
                 <hr />
                 <form onSubmit={enviarForm} className="formulario-postulacion">
@@ -64,14 +110,19 @@ function Formulario() {
 
                     <label htmlFor="experiencia">
                         <span className="etiqueta-formulario">Años de experiencia</span>
-                        <select name="experiencia" id="experiencia" className="input-formulario"
-                            value={experiencia} onChange={(e) => setExperiencia(e.target.value)}>
-                            <option>Menos de un año</option>
-                            <option>1 - 2 años</option>
-                            <option>2 - 4 años</option>
-                            <option>4 - 7 años</option>
-                            <option>7 - 10 años</option>
-                            <option>Más de 10 años</option>
+                        <select 
+                            name="experiencia" 
+                            id="experiencia" 
+                            className="input-formulario"
+                            value={experienciaId} 
+                            onChange={(e) => setExperienciaId(e.target.value)}
+                        >
+                            <option value="">-- Selecciona una opción --</option>
+                            {listaRangos.map((rango) => (
+                                <option key={rango.idRangoExperiencia} value={rango.idRangoExperiencia}>
+                                    {rango.descripcionRango}
+                                </option>
+                            ))}
                         </select>
                     </label>
 
@@ -82,7 +133,7 @@ function Formulario() {
                     </label>
 
                     <label htmlFor="cv">
-                        <span className="etiqueta-formulario">Adjunta tu CV</span>
+                        <span className="etiqueta-formulario">Adjunta tu CV (Opcional)</span>
                         <input name="cv" id="cv" type="file" className="input-formulario"
                             onChange={(e) => setCv(e.target.files && e.target.files[0] ? e.target.files[0] : null)} />
                     </label>
@@ -90,7 +141,7 @@ function Formulario() {
                     <button type="submit" className="boton-formulario">Postular</button>
                 </form>
 
-                {respuesta && <p role="alert" style={{ marginTop: 12 }}>{respuesta}</p>}
+                {respuesta && <p role="alert" style={{ marginTop: 12, fontWeight: "bold" }}>{respuesta}</p>}
             </section>
         </main>
     );
