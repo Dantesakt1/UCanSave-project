@@ -12,33 +12,19 @@ body {
   background: #ffffff;
 }
 
-/* Contenedor principal */
+/* --- CAMBIO IMPORTANTE --- */
+/* Ya no usamos position: absolute aquí para evitar conflictos de clic.
+   El centrado lo manejamos ahora desde el componente React con Flexbox. */
 .contenedor {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   max-width: 430px;
   width: 100%;
   background: #fff;
   border-radius: 7px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  /* Aseguramos que el fondo sea blanco sólido */
+  position: relative; 
+  z-index: 10;
 }
-
-/* ------------------------------------------- /
-/ CAMBIOS PARA REACT /
-/ ------------------------------------------- */
-
-/* Clase de React para ocultar la vista /
-.hidden {
-  display: none !important; / Importante para sobreescribir cualquier otra regla */
-
-/* Las siguientes reglas del HTML original eran para el checkbox y ya no son necesarias en React,
-pero las dejo comentadas para tu referencia: /
-/ .contenedor .registro{ display: none; } /
-/ #cambiar-formulario:checked ~ .registro{ display: block; } /
-/ #cambiar-formulario:checked ~ .inicio-sesion{ display: none; } /
-/ #cambiar-formulario{ display: none; } */
 
 /* Formulario */
 .contenedor .formulario {
@@ -77,7 +63,7 @@ pero las dejo comentadas para tu referencia: /
   text-decoration: underline;
 }
 
-/* Botón */
+/* Botón Verde (Submit) */
 .formulario input.boton {
   color: #fff;
   background: #009579;
@@ -87,23 +73,16 @@ pero las dejo comentadas para tu referencia: /
   margin-top: 1.7rem;
   cursor: pointer;
   transition: 0.4s;
+  border: none;
 }
 
 .formulario input.boton:hover {
   background: #006653;
 }
 
-/* Texto inferior */
+/* Texto inferior (Ya tienes cuenta? etc) */
 .texto-registro {
   font-size: 17px;
   text-align: center;
-}
-
-.texto-registro label {
-  color: #009579;
-  cursor: pointer;
-}
-
-.texto-registro label:hover {
-  text-decoration: underline;
+  margin-top: 20px;
 }
