@@ -1,37 +1,34 @@
 @import url(estilo.css);
 
-/* Galería */
 .galeria {
     padding: 20px;
     text-align: center;
 }
 
-.contenedor {
+/* --- SOLUCIÓN DEL CENTRADO --- */
+/* Cambiamos el nombre para que NO use el estilo del Login */
+.contenedor-animales {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+    flex-wrap: wrap; /* Permite que bajen a la siguiente linea */
+    justify-content: center; /* Centra todo el bloque */
+    gap: 25px; /* Espacio entre tarjetas */
+    width: 100%;
+    max-width: 1200px; /* Ancho máximo para pantallas grandes */
+    margin: 0 auto; /* Centrar el contenedor en la pantalla */
 }
 
-.vista {
-    display: flex;
-        flex-wrap: wrap;
-    justify-content: center;
-}
-
+/* Estilo de la Ficha (Idéntico a tu script antiguo) */
 .ficha {
-    width: 250px;
+    width: 260px; /* Ancho fijo como antes */
     background: white;
     border: 2px solid #ddd;
     border-radius: 10px;
     padding: 15px;
     box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
     text-align: center;
-
-        /* para ajustar el boton */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; /* Para que el botón quede abajo */
 }
 
 .animal {
@@ -44,18 +41,35 @@
 .ficha h3 {
     margin: 10px 0 5px;
     color: #2c7a7b;
+    font-family: 'SFCompactRoundedBold';
+}
+
+/* Estilo para la línea divisora */
+.ficha hr {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin: 5px 0 10px 0;
 }
 
 .ficha p {
-    font-size: 14px;
-    margin-bottom: 10px;
+    font-size: 13px; /* Letra un poco más pequeña para que quepa todo */
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: #555;
 }
 
-/* Botones "Agregar" */
+.precio-ficha {
+    color: #2c7a7b;
+    font-size: 15px !important;
+    margin-top: 5px;
+}
+
+/* Botón igual al antiguo */
 .ficha input[type="button"] {
     background: linear-gradient(135deg, #44b699, #068d70);
     color: white;
-    margin-top: auto; /* fuerza a ir al final */
+    margin-top: 10px;
     border: none;
     padding: 10px 18px;
     border-radius: 25px;
@@ -64,16 +78,42 @@
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0px 4px 6px rgba(0,0,0,0.15);
+    width: 100%;
 }
 
 .ficha input[type="button"]:hover {
     background: linear-gradient(135deg, #0f7564, #075541);
     transform: scale(1.05);
-    box-shadow: 0px 6px 10px rgba(0,0,0,0.2);
 }
 
+/* --- ESTILOS DE BOTONES DE FILTRO CORREGIDOS --- */
+.btn-filtro {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 8px 15px;
+    margin: 0 5px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'SFCompactRoundedBold';
+    transition: all 0.3s ease; /* Transición suave */
+}
 
-/* sección carrito */
+/* Hover: Fondo verde oscuro y LETRA BLANCA */
+.btn-filtro:hover {
+    background-color: #2c7a7b;
+    color: #ffffff !important; /* Importante para forzar el blanco */
+    border-color: #2c7a7b;
+}
+
+/* Activo: Fondo verde normal y letra blanca */
+.btn-filtro.activo {
+    background-color: #44b699;
+    color: white;
+    border-color: #44b699;
+}
+
+/* --- ESTILOS DEL CARRITO --- */
 .carrito {
     margin: 30px auto;
     width: 80%;

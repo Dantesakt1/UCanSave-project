@@ -1,162 +1,133 @@
 import React, { useState, useEffect } from "react"; 
-import '../css/apadrinamiento.css'; // Tu CSS de apadrinamiento
-import '../css/estilo.css'; // Estilos generales (para botones, etc.)
+import '../css/apadrinamiento.css'; 
+import '../css/estilo.css'; 
+import { getAnimales } from "../api_rest"; 
 
 const Apadrinamiento = () => {
 
-    const [filtroActivo, setFiltroActivo] = useState('todos');
-    const [animales, setAnimales] = useState([]);
+    const [animales, setAnimales] = useState([]); 
+    const [filtroActivo, setFiltroActivo] = useState('todos'); 
+    const [carrito, setCarrito] = useState([]); 
 
-    // 1. useEffect para CARGAR DATOS y SCRIPTS (al montar)
+    // --- CARGAR DATOS ---
     useEffect(() => {
-        // --- LÍNEAS ELIMINADAS ---
-        // const data = JSON.parse(localStorage.getItem("listaAnimales")) || [];
-        // setAnimales(data); 
-        // (Las movimos abajo para que se ejecuten DESPUÉS de cargar los scripts)
-
-        const scripts = [
-            '/js/animal.js',
-            '/js/productoAnimal.js',
-            '/js/script.js'
-        ];
-
-        // Carga secuencial (para asegurar que productoAnimal.js cargue antes que script.js)
-        const loadScriptSequentially = async () => {
-            for (const src of scripts) {
-                if (document.querySelector(`script[src="${src}"]`)) {
-                    continue; 
-                }
-                try {
-                    await new Promise((resolve, reject) => {
-                        const sc = document.createElement('script');
-                        sc.src = src;
-                        sc.defer = true; 
-                        sc.onload = resolve;
-                        sc.onerror = () => reject(new Error(`Fallo al cargar ${src}`));
-                        document.body.appendChild(sc);
-                    });
-                } catch (error) {
-                    console.error("Fallo la carga secuencial:", error);
-                    break;
-                }
-            }
-            
-            // --- LÓGICA DE CARGA DE DATOS (CORREGIDA) ---
-            // Esto se ejecuta DESPUÉS de que 'productoAnimal.js' (que define window.listaAnimalesInicial)
-            // y 'script.js' (que define renderCatalogo) han cargado.
-            
-            if (typeof window.renderCatalogo === 'function') {
-                
-                let animalesParaCargar = [];
-                const animalesGuardados = localStorage.getItem("listaAnimales");
-
-                if (animalesGuardados && JSON.parse(animalesGuardados).length > 0) {
-                    // 1. Usar datos de localStorage si existen
-                    console.log("Apadrinamiento: Cargando desde localStorage.");
-                    animalesParaCargar = JSON.parse(animalesGuardados);
-                } 
-                else if (window.listaAnimalesInicial) {
-                    // 2. Si no, usar los datos iniciales del script (productoAnimal.js) y guardarlos
-                    console.log("Apadrinamiento: localStorage vacío, usando listaAnimalesInicial y guardando.");
-                    animalesParaCargar = window.listaAnimalesInicial;
-                    localStorage.setItem("listaAnimales", JSON.stringify(animalesParaCargar));
-                }
-                
-                // 3. Actualizar el estado de React (esto disparará el 2do useEffect)
-                setAnimales(animalesParaCargar); 
-                
-                // (Opcional: llamar a renderCatalogo aquí también, aunque el 2do useEffect lo hará)
-                // window.renderCatalogo(animalesParaCargar); // (La llamada inicial)
+        const cargarAnimales = async () => {
+            try {
+                const datos = await getAnimales();
+                setAnimales(datos);
+            } catch (error) {
+                console.error("Error:", error);
             }
         };
+        cargarAnimales();
 
-        loadScriptSequentially();
+        const carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
+        setCarrito(carritoGuardado);
+    }, []);
 
-        // Función de limpieza
-        return () => {
-            scripts.forEach(src => {
-                const sc = document.querySelector(`script[src="${src}"]`);
-                if (sc && sc.parentNode === document.body) {
-                    document.body.removeChild(sc);
-                }
-            });
-        };
-    }, []); // Array vacío, se ejecuta solo una vez al montar
+    // --- AGREGAR AL CARRITO ---
+    const agregarAlCarrito = (animal) => {
+        // Lógica del carrito (reutilizamos la lógica de cantidad)
+        let nuevoCarrito = [...carrito];
+        const index = nuevoCarrito.findIndex(item => item.idAnimal === animal.idAnimal);
 
-    // 2. useEffect para RE-RENDERIZAR al cambiar el filtro
-    useEffect(() => {
-        if (typeof window.renderCatalogo !== 'function') {
-            return; // Espera a que script.js cargue
-        }
-
-        let animalesFiltrados = [];
-        if (filtroActivo === 'todos') {
-            animalesFiltrados = animales;
+        if (index !== -1) {
+            // Si ya existe, aumentamos cantidad (opcional, según tu lógica vieja)
+            nuevoCarrito[index].cantidad = (nuevoCarrito[index].cantidad || 1) + 1;
         } else {
-            animalesFiltrados = animales.filter(animal => animal.categoria === filtroActivo);
+            // Si es nuevo, lo agregamos adaptando los nombres para que coincidan con tu carrito viejo
+            nuevoCarrito.push({
+                idAnimal: animal.idAnimal, // Tu ID de base de datos
+                nombre: animal.nombreAnimal,
+                precio: animal.costoApadrinamiento,
+                imagen: animal.urlImagen,
+                cantidad: 1
+            });
         }
         
-        // Llamar a la función global renderCatalogo con la lista filtrada
-        window.renderCatalogo(animalesFiltrados);
+        setCarrito(nuevoCarrito);
+        localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
+        alert(`¡${animal.nombreAnimal} agregado!`);
+    };
 
-    }, [filtroActivo, animales]); // Se ejecuta si 'filtroActivo' o 'animales' cambian
+    // --- CÁLCULOS ---
+    const totalItems = carrito.reduce((acc, item) => acc + (item.cantidad || 1), 0);
+    const totalPrecio = carrito.reduce((acc, item) => acc + (parseFloat(item.precio) * (item.cantidad || 1)), 0);
+
+    // --- FILTRADO ---
+    const animalesFiltrados = animales.filter(animal => {
+        if (filtroActivo === 'todos') return true;
+        // Accedemos a la categoría dentro del objeto especie
+        const categoriaNombre = animal.especie?.categoria?.nombreCategoria || ""; 
+        // Nota: Ajusta 'nombreCategoria' si en tu BD se llama diferente, ej: 'descripcion'
+        
+        // Mapeo manual si tu BD tiene nombres complejos, o comparación directa:
+        // Asumiendo que en BD tienes "Terrestre", "Marino", "Aéreo"
+        return categoriaNombre.toLowerCase().includes(filtroActivo.toLowerCase());
+    });
 
     return (
         <main>
             <section className="galeria">
                 <h2>Apadrina algún animal !</h2>
                 
-                {/* --- Botones de Filtro --- */}
+                {/* Botones de Filtro */}
                 <div className="filtros-categoria" style={{ textAlign: 'center', margin: '20px 0' }}>
-                    <button 
-                        className={`btn-filtro ${filtroActivo === 'todos' ? 'activo' : ''}`}
-                        onClick={() => setFiltroActivo('todos')}>
-                        Todos
-                    </button>
-                    <button 
-                        className={`btn-filtro ${filtroActivo === 'terrestre' ? 'activo' : ''}`}
-                        onClick={() => setFiltroActivo('terrestre')}>
-                        Terrestres
-                    </button>
-                    <button 
-                        className={`btn-filtro ${filtroActivo === 'marino' ? 'activo' : ''}`}
-                        onClick={() => setFiltroActivo('marino')}>
-                        Marinos
-                    </button>
-                    <button 
-                        className={`btn-filtro ${filtroActivo === 'aereo' ? 'activo' : ''}`}
-                        onClick={() => setFiltroActivo('aereo')}>
-                        Aéreos
-                    </button>
+                    {['todos', 'terrestre', 'marino', 'aereo'].map(filtro => (
+                        <button key={filtro} className={`btn-filtro ${filtroActivo === filtro ? 'activo' : ''}`}
+                            onClick={() => setFiltroActivo(filtro)}>
+                            {filtro.charAt(0).toUpperCase() + filtro.slice(1)}
+                        </button>
+                    ))}
                 </div>
-                {/* Estilos (los moví a 'apadrinamiento.css' en mi mente, pero los dejo aquí por si acaso) */}
-                <style>{`
-                    .btn-filtro {
-                        background-color: #f0f0f0; color: #333; border: 1px solid #ddd;
-                        padding: 10px 20px; margin: 0 5px; border-radius: 25px;
-                        cursor: pointer; transition: all 0.3s ease;
-                        font-family: 'SFCompactRoundedBold', Arial, sans-serif;
-                        font-size: 14px; font-weight: bold;
-                    }
-                    .btn-filtro:hover { background-color: #ddd; }
-                    .btn-filtro.activo {
-                        background-color: #44b699; color: white; border-color: #44b699;
-                    }
-                `}</style>
 
-                {/* Contenedor donde script.js renderizará los animales */}
-                <div id="catalogo-animales" className="vista"> 
-                    <p>Cargando animales para apadrinar...</p> 
+                {/* CAMBIO CLAVE: Usamos 'contenedor-animales' para arreglar el diseño */}
+                <div className="contenedor-animales"> 
+                    {animalesFiltrados.length > 0 ? (
+                        animalesFiltrados.map((animal) => (
+                            // ESTA ES TU FICHA ORIGINAL RESTAURADA
+                            <div className="ficha" key={animal.idAnimal}>
+                                
+                                <img 
+                                    className="animal" 
+                                    src={animal.urlImagen || "/img/sin-imagen.jpg"} 
+                                    alt={animal.nombreAnimal}
+                                />
+                                
+                                <h3>{animal.nombreAnimal}</h3>
+                                <hr/>
+                                
+                                {/* Datos traídos desde la relación con Especie en Java */}
+                                <p>Especie: {animal.especie ? animal.especie.nombreCientifico : "Desconocida"}</p>
+                                
+                                <p>⚠️ En peligro: {animal.especie ? animal.especie.amenazasPrincipales : "Sin datos"}</p>
+                                
+                                <p style={{minHeight: '40px'}}>{animal.historiaRescate}</p>
+                                
+                                <p className="precio-ficha">
+                                    <b>Apadrinamiento: ${parseInt(animal.costoApadrinamiento).toLocaleString('es-CL')} CLP</b>
+                                </p> 
+                                
+                                <input 
+                                    type="button" 
+                                    value="Agregar" 
+                                    onClick={() => agregarAlCarrito(animal)}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <p>No hay animales en esta categoría.</p>
+                    )}
                 </div>
             </section>
 
             <section className="carrito">
-                Carrito: <label id="pie">0</label> <br/>
-                Items: <span id="items">0</span> <br/>
-                Total: $<span id="total">0</span>
+                <h3>Resumen</h3>
+                Items: <label id="items">{totalItems}</label> Total: <span id="total" style={{fontWeight:'bold'}}>${totalPrecio.toLocaleString('es-CL')}</span>
+                {totalItems > 0 && <div style={{marginTop:'10px'}}><a href="/carrito" className="btn-apadrina">Pagar</a></div>}
             </section>
         </main>
     );
 }
-export default Apadrinamiento;
 
+export default Apadrinamiento;
