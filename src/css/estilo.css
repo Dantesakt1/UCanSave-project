@@ -509,3 +509,40 @@ footer {
   font-size: 18px;
   margin-bottom: 15px;
 }
+
+/* --- AGREGAR AL FINAL DE ESTILO.CSS --- */
+
+/* Contenedor para alinear saludo y botón */
+.usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Texto de saludo */
+.saludo {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    font-family: 'SFCompactRoundedBold';
+}
+
+/* Botón Cerrar Sesión */
+.btn-logout {
+    background-color: transparent;
+    color: #e63946; /* Rojo para indicar salida */
+    border: 2px solid #e63946;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-family: 'SFCompactRoundedBold';
+}
+
+.btn-logout:hover {
+    background-color: #e63946;
+    color: white;
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+    transform: translateY(-1px);
+}

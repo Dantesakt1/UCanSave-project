@@ -5,7 +5,6 @@ import '../css/estilo.css';
 import { saveUsuario, getUsuarios } from '../api_rest';
 
 function LoginRegister() {
-    // --- ESTADOS ---
     const [isRegisterView, setIsRegisterView] = useState(false);
     const navigate = useNavigate();
     const [message, setMessage] = useState({ type: '', text: '' });
@@ -21,7 +20,6 @@ function LoginRegister() {
     const [registerPassword, setRegisterPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // --- FUNCIONES ---
     function validateEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) return false;
@@ -35,17 +33,15 @@ function LoginRegister() {
         setTimeout(() => setMessage({ type: '', text: '' }), 4000); 
     };
 
-    // --- LOGICA LOGIN ---
     const handleLogin = async (e) => {
         e.preventDefault();
         setMessage({ type: '', text: '' }); 
 
         if (loginPassword.trim() === "") return displayMessage('error', 'Ingresa tu contraseña.');
 
-        // Admin Hardcoded
         if (loginEmail === "admin@ucansave.com" && loginPassword === "admin123") {
             localStorage.setItem("usuario", JSON.stringify({ nombre: "Admin", rol: "ADMIN" }));
-            displayMessage('success', 'Bienvenido Admin.');
+            displayMessage('success', 'Bienvenido admin');
             setTimeout(() => navigate('/menu-admin'), 1000); 
             return;
         }
@@ -68,7 +64,6 @@ function LoginRegister() {
         }
     };
     
-    // --- LOGICA REGISTRO ---
     const handleRegister = async (e) => {
         e.preventDefault();
 
@@ -97,16 +92,14 @@ function LoginRegister() {
             displayMessage('error', 'No se pudo registrar. Quizás el correo ya existe.');
         }
     };
-
-    // --- ESTILOS INLINE (Para asegurar funcionamiento) ---
     
-    // Centrado Flexbox (Soluciona el problema de clics bloqueados)
+    // centrado flexbox (soluciona el problema de clics bloqueados)
     const mainStyle = { 
         display: 'flex', justifyContent: 'center', alignItems: 'center', 
         minHeight: '85vh', paddingTop: '80px', backgroundColor: '#fff' 
     };
 
-    // Estilo para que el Botón parezca un Link
+    // Estilo para que el boton parezca un link
     const textButtonStyle = {
         background: 'none', border: 'none', padding: '0 5px',
         color: '#009579', fontWeight: 'bold', fontSize: '17px',
@@ -145,7 +138,6 @@ function LoginRegister() {
                         
                         <div className="texto-registro">
                             <span>¿No tienes una cuenta? </span>
-                            {/* BOTÓN REAL PARA REGISTRARSE */}
                             <button type="button" style={textButtonStyle} onClick={() => setIsRegisterView(true)}>
                                 Regístrate
                             </button>
@@ -174,7 +166,6 @@ function LoginRegister() {
 
                         <div className="texto-registro">
                             <span>¿Ya tienes una cuenta? </span>
-                            {/* BOTÓN REAL PARA LOGIN */}
                             <button type="button" style={textButtonStyle} onClick={() => setIsRegisterView(false)}>
                                 Inicia sesión
                             </button>

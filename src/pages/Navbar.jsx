@@ -1,6 +1,27 @@
-import '../css/estilo.css'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importamos useNavigate para redireccionar al salir
+import '../css/estilo.css';
 
 function Navbar() {
+    const [usuario, setUsuario] = useState(null);
+    const navigate = useNavigate();
+
+    // 1. Al cargar el Navbar, buscamos si hay usuario en localStorage
+    useEffect(() => {
+        const usuarioGuardado = localStorage.getItem("usuario");
+        if (usuarioGuardado) {
+            setUsuario(JSON.parse(usuarioGuardado));
+        }
+    }, []);
+
+    // 2. Función para Cerrar Sesión
+    const handleLogout = () => {
+        localStorage.removeItem("usuario"); // Borramos datos
+        setUsuario(null); // Limpiamos estado
+        navigate('/login-registro'); // Redirigimos al login
+        window.location.reload(); // Forzamos recarga para limpiar cualquier dato en memoria
+    };
+
     return (
         <header>
             <nav className="navbar">
@@ -8,10 +29,10 @@ function Navbar() {
 
                     <div className="nav-logo" id="logo">
                         <img src="img/logo.png" alt="logo"/>
-                            <h1>U Can Save</h1>
+                        <h1>U Can Save</h1>
                     </div>
 
-                   {/* nav links */}
+                    {/* nav links */}
                     <ul className="nav-menu">
                         <li className="nav-item">
                             <a href="/" className="nav-link">Inicio</a>
@@ -28,18 +49,37 @@ function Navbar() {
                         <li className="nav-item">
                             <a href="/formulario" className="nav-link">Formulario</a>
                         </li>
+                        
+                        {/* 3. MENU ADMIN: Solo se muestra si el rol es ADMIN */}
+                        {usuario && usuario.rol === "ADMIN" && (
+                            <li className="nav-item">
+                                <a href="/menu-admin" className="nav-link" style={{color: '#e63946', fontWeight: 'bold'}}>Admin</a>
+                            </li>
+                        )}
                     </ul>
 
-                    {/* BOTON */}
+                    {/* BOTONES */}
                     <div className="nav-btn">
                         <a href="/apadrinamiento" className="btn-apadrina">Apadrina</a>
-                        <a href="/login-registro" className="btn-login_register">Login / Registro</a>
+
+                        {/* 4. LOGICA CONDICIONAL */}
+                        {usuario ? (
+                            // SI HAY USUARIO: Mostramos saludo y botón salir
+                            <div className="usuario-info">
+                                <span className="saludo">Hola, {usuario.nombre}</span>
+                                <button onClick={handleLogout} className="btn-logout">
+                                    Cerrar Sesión
+                                </button>
+                            </div>
+                        ) : (
+                            // NO HAY USUARIO: Mostramos Login
+                            <a href="/login-registro" className="btn-login_register">Login / Registro</a>
+                        )}
                     </div>
                 </div>
             </nav>
-
         </header>
-    )
+    );
 }
 
-export default Navbar
+export default Navbar;

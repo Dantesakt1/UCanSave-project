@@ -28,9 +28,11 @@ function App() {
   return (
     <>
 
-      <Navbar />
+
 
       <Router>
+
+        <Navbar />
         <Routes>
           {/* Rutas y componentes aquí */}
           <Route path='/' element={<Menu />} />
