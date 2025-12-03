@@ -19,6 +19,7 @@ import AdminUsuarios from './pages/AdminUsuarios'
 import Checkout from './pages/checkout'
 import PagoExitoso from './pages/PagoExitoso'
 import PagoFallido from './pages/PagoFallido'
+import MisApadrinamientos from './pages/MisApadrinamientos'
 import './css/pagos.css';
 
 
@@ -49,6 +50,7 @@ function App() {
           <Route path='/checkout' element={<Checkout />} />
           <Route path='/pago-exitoso' element={<PagoExitoso />} />
           <Route path='/pago-fallido' element={<PagoFallido />} />
+          <Route path='/mis-apadrinamientos' element={<MisApadrinamientos />} />
 
 
         </Routes>

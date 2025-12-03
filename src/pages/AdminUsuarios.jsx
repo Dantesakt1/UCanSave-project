@@ -1,73 +1,103 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-import '../css/usuarios.css';
+import '../css/usuarios.css'; // Asegúrate de que este CSS exista
+// IMPORTAMOS LAS FUNCIONES DEL API
+import { getUsuarios, saveUsuario, updateUsuario, deleteUsuario } from '../api_rest';
 
 function AdminUsuarios() {
-  const datosDePrueba = [
-    { id: 1, rut: "11.111.111-1", nombre: "Juan Pérez", correo: "juanperez@mail.com", contraseña: "1234", repetirContraseña: "1234" },
-    { id: 2, rut: "22.222.222-2", nombre: "María López", correo: "marialopez@mail.com", contraseña: "abcd", repetirContraseña: "abcd" },
-    { id: 3, rut: "33.333.333-3", nombre: "Carlos Díaz", correo: "carlosdiaz@mail.com", contraseña: "5678", repetirContraseña: "5678" },
-    { id: 4, rut: "44.444.444-4", nombre: "Ana Torres", correo: "anatorres@mail.com", contraseña: "efgh", repetirContraseña: "efgh" },
-    { id: 5, rut: "55.555.555-5", nombre: "Luis Gómez", correo: "luisgomez@mail.com", contraseña: "91011", repetirContraseña: "91011" }
-  ];
-
   const [usuarios, setUsuarios] = useState([]);
   const [modalAgregar, setModalAgregar] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
+  
+  // ESTADO PARA EDICIÓN
   const [usuarioEditando, setUsuarioEditando] = useState(null);
+
+  // ESTADO PARA NUEVO USUARIO (Estructura idéntica a tu Java)
   const [nuevoUsuario, setNuevoUsuario] = useState({
-    rut: '',
     nombre: '',
-    correo: '',
-    contraseña: '',
-    repetirContraseña: ''
+    apellido: '',
+    email: '',
+    passwordHash: ''
   });
 
+  // --- 1. CARGAR USUARIOS (GET) ---
+  const cargarUsuarios = async () => {
+    try {
+        const datos = await getUsuarios();
+        setUsuarios(datos);
+    } catch (error) {
+        console.error("Error al cargar usuarios:", error);
+    }
+  };
+
   useEffect(() => {
-    const usuariosGuardados = JSON.parse(localStorage.getItem("usuarios")) || datosDePrueba;
-    setUsuarios(usuariosGuardados);
+    cargarUsuarios();
   }, []);
 
-  const guardarUsuarios = (nuevosUsuarios) => {
-    localStorage.setItem("usuarios", JSON.stringify(nuevosUsuarios));
-    setUsuarios(nuevosUsuarios);
-  };
-
-  const handleSubmitAgregar = (e) => {
+  // --- 2. AGREGAR USUARIO (POST) ---
+  const handleSubmitAgregar = async (e) => {
     e.preventDefault();
-    const nuevoId = usuarios.length > 0 ? usuarios[usuarios.length - 1].id + 1 : 1;
-    const usuarioConId = { ...nuevoUsuario, id: nuevoId };
-    const nuevosUsuarios = [...usuarios, usuarioConId];
-    guardarUsuarios(nuevosUsuarios);
-    setModalAgregar(false);
-    setNuevoUsuario({ rut: '', nombre: '', correo: '', contraseña: '', repetirContraseña: '' });
-  };
+    
+    // Preparar objeto para Java
+    const usuarioParaEnviar = {
+        nombre: nuevoUsuario.nombre,
+        apellido: nuevoUsuario.apellido,
+        email: nuevoUsuario.email,
+        passwordHash: nuevoUsuario.passwordHash,
+        fechaRegistro: new Date().toISOString() // Enviamos la fecha actual automática
+    };
 
-  const handleSubmitEditar = (e) => {
-    e.preventDefault();
-    const nuevosUsuarios = usuarios.map((usuario) => 
-      usuario.id === usuarioEditando.id ? usuarioEditando : usuario
-    );
-    guardarUsuarios(nuevosUsuarios);
-    setModalEditar(false);
-    setUsuarioEditando(null);
-  };
-
-  const eliminarUsuario = (id) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este usuario?")) {
-      const nuevosUsuarios = usuarios.filter(usuario => usuario.id !== id);
-      guardarUsuarios(nuevosUsuarios);
+    try {
+        await saveUsuario(usuarioParaEnviar);
+        alert("Usuario creado exitosamente");
+        setModalAgregar(false);
+        setNuevoUsuario({ nombre: '', apellido: '', email: '', passwordHash: '' }); // Limpiar
+        cargarUsuarios(); // Recargar tabla
+    } catch (error) {
+        console.error(error);
+        alert("Error al guardar. Posiblemente el email ya existe.");
     }
+  };
+
+  // --- 3. ELIMINAR USUARIO (DELETE) ---
+  const eliminarUsuario = async (id) => {
+    if (window.confirm("¿Estás seguro de eliminar este usuario de la BD?")) {
+        try {
+            await deleteUsuario(id);
+            cargarUsuarios();
+        } catch (error) {
+            console.error(error);
+            alert("Error al eliminar usuario.");
+        }
+    }
+  };
+
+  // --- 4. PREPARAR EDICIÓN ---
+  const abrirModalEditar = (usuario) => {
+      setUsuarioEditando(usuario);
+      setModalEditar(true);
+  };
+
+  // --- 5. GUARDAR EDICIÓN (PUT) ---
+  const handleSubmitEditar = async (e) => {
+      e.preventDefault();
+      try {
+          await updateUsuario(usuarioEditando.idUsuario, usuarioEditando);
+          alert("Usuario actualizado correctamente");
+          setModalEditar(false);
+          setUsuarioEditando(null);
+          cargarUsuarios();
+      } catch (error) {
+          console.error(error);
+          alert("Error al actualizar.");
+      }
   };
 
   return (
     <>
       <header>
         <nav className="sidebar">
-            <br />
-            <br />
-          <h2></h2>
+            <br /><br />
           <ul>
             <li><Link to="/menu-admin">Inicio</Link></li>
             <li><Link to="/admin-animales">Animales</Link></li>
@@ -81,128 +111,100 @@ function AdminUsuarios() {
       </header>
 
       <main className="contenido">
-        <br />
-        <br />
-        <br />
-        <h1>Gestión de Usuarios</h1>
-        <p>Aquí puedes administrar a los usuarios</p>
+        <br /> <br /> <br />
+        <h1>Gestión de Usuarios (Base de Datos)</h1>
+        <p>Aquí puedes administrar a los usuarios registrados en el sistema.</p>
 
         <button onClick={() => setModalAgregar(true)}>Agregar Usuario</button>
 
         <table id="tablaUsuarios">
           <thead>
             <tr>
-              <th>RUT</th>
-              <th>Nombre Completo</th>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
               <th>Correo</th>
+              <th>Fecha Registro</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {usuarios.map((usuario) => (
-              <tr key={usuario.id}>
-                <td>{usuario.rut}</td>
+              <tr key={usuario.idUsuario}>
+                <td>{usuario.idUsuario}</td>
                 <td>{usuario.nombre}</td>
-                <td>{usuario.correo}</td>
+                <td>{usuario.apellido}</td>
+                <td>{usuario.email}</td>
+                {/* Formateamos la fecha un poco para que se vea bien */}
+                <td>{usuario.fechaRegistro ? new Date(usuario.fechaRegistro).toLocaleDateString() : 'N/A'}</td>
                 <td>
-                  <button onClick={() => {
-                    setUsuarioEditando(usuario);
-                    setModalEditar(true);
-                  }}>Editar</button>
-                  <button onClick={() => eliminarUsuario(usuario.id)}>Eliminar</button>
+                  <button onClick={() => abrirModalEditar(usuario)}>Editar</button>
+                  <button onClick={() => eliminarUsuario(usuario.idUsuario)}>Eliminar</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
 
+        {/* --- MODAL AGREGAR --- */}
         {modalAgregar && (
           <div className="modal" style={{display: 'block'}}>
-            <h2>Agregar Usuario</h2>
-            <form onSubmit={handleSubmitAgregar}>
-              <label>RUT:</label>
-              <input 
-                type="text" 
-                required
-                value={nuevoUsuario.rut}
-                onChange={(e) => setNuevoUsuario({...nuevoUsuario, rut: e.target.value})}
-              /><br/>
-              <label>Nombre Completo:</label>
-              <input 
-                type="text" 
-                required
-                value={nuevoUsuario.nombre}
-                onChange={(e) => setNuevoUsuario({...nuevoUsuario, nombre: e.target.value})}
-              /><br/>
-              <label>Correo:</label>
-              <input 
-                type="email" 
-                required
-                value={nuevoUsuario.correo}
-                onChange={(e) => setNuevoUsuario({...nuevoUsuario, correo: e.target.value})}
-              /><br/>
-              <label>Contraseña:</label>
-              <input 
-                type="password" 
-                required
-                value={nuevoUsuario.contraseña}
-                onChange={(e) => setNuevoUsuario({...nuevoUsuario, contraseña: e.target.value})}
-              /><br/>
-              <label>Repetir Contraseña:</label>
-              <input 
-                type="password" 
-                required
-                value={nuevoUsuario.repetirContraseña}
-                onChange={(e) => setNuevoUsuario({...nuevoUsuario, repetirContraseña: e.target.value})}
-              /><br/>
-              <button type="button" onClick={() => setModalAgregar(false)}>Cancelar</button>
-              <button type="submit">Guardar</button>
-            </form>
+            <div className="modal-contenido">
+                <span className="cerrar" onClick={() => setModalAgregar(false)}>&times;</span>
+                <h2>Agregar Usuario</h2>
+                <form onSubmit={handleSubmitAgregar}>
+                
+                <label>Nombre:</label>
+                <input type="text" required value={nuevoUsuario.nombre}
+                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, nombre: e.target.value})} />
+                
+                <label>Apellido:</label>
+                <input type="text" required value={nuevoUsuario.apellido}
+                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, apellido: e.target.value})} />
+
+                <label>Correo:</label>
+                <input type="email" required value={nuevoUsuario.email}
+                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, email: e.target.value})} />
+
+                <label>Contraseña:</label>
+                <input type="password" required value={nuevoUsuario.passwordHash}
+                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, passwordHash: e.target.value})} />
+
+                <button type="button" onClick={() => setModalAgregar(false)}>Cancelar</button>
+                <button type="submit">Guardar</button>
+                </form>
+            </div>
           </div>
         )}
 
+        {/* --- MODAL EDITAR --- */}
         {modalEditar && usuarioEditando && (
           <div className="modal" style={{display: 'block'}}>
-            <h2>Editar Usuario</h2>
-            <form onSubmit={handleSubmitEditar}>
-              <label>RUT:</label>
-              <input 
-                type="text" 
-                required
-                value={usuarioEditando.rut}
-                onChange={(e) => setUsuarioEditando({...usuarioEditando, rut: e.target.value})}
-              /><br/>
-              <label>Nombre Completo:</label>
-              <input 
-                type="text" 
-                required
-                value={usuarioEditando.nombre}
-                onChange={(e) => setUsuarioEditando({...usuarioEditando, nombre: e.target.value})}
-              /><br/>
-              <label>Correo:</label>
-              <input 
-                type="email" 
-                required
-                value={usuarioEditando.correo}
-                onChange={(e) => setUsuarioEditando({...usuarioEditando, correo: e.target.value})}
-              /><br/>
-              <label>Contraseña:</label>
-              <input 
-                type="password" 
-                required
-                value={usuarioEditando.contraseña}
-                onChange={(e) => setUsuarioEditando({...usuarioEditando, contraseña: e.target.value})}
-              /><br/>
-              <label>Repetir Contraseña:</label>
-              <input 
-                type="password" 
-                required
-                value={usuarioEditando.repetirContraseña}
-                onChange={(e) => setUsuarioEditando({...usuarioEditando, repetirContraseña: e.target.value})}
-              /><br/>
-              <button type="button" onClick={() => setModalEditar(false)}>Cancelar</button>
-              <button type="submit">Guardar</button>
-            </form>
+             <div className="modal-contenido">
+                <span className="cerrar" onClick={() => setModalEditar(false)}>&times;</span>
+                <h2>Editar Usuario</h2>
+                <form onSubmit={handleSubmitEditar}>
+                  
+                  <label>Nombre:</label>
+                  <input type="text" required value={usuarioEditando.nombre}
+                    onChange={(e) => setUsuarioEditando({...usuarioEditando, nombre: e.target.value})} />
+
+                  <label>Apellido:</label>
+                  <input type="text" required value={usuarioEditando.apellido}
+                    onChange={(e) => setUsuarioEditando({...usuarioEditando, apellido: e.target.value})} />
+
+                  <label>Correo:</label>
+                  <input type="email" required value={usuarioEditando.email}
+                    onChange={(e) => setUsuarioEditando({...usuarioEditando, email: e.target.value})} />
+
+                  <label>Contraseña (Nueva):</label>
+                  <input type="text" required value={usuarioEditando.passwordHash}
+                    onChange={(e) => setUsuarioEditando({...usuarioEditando, passwordHash: e.target.value})} />
+
+                  <button type="button" onClick={() => setModalEditar(false)}>Cancelar</button>
+                  <button type="submit">Actualizar</button>
+                </form>
+             </div>
           </div>
         )}
       </main>

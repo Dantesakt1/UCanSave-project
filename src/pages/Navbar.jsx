@@ -28,7 +28,7 @@ function Navbar() {
                 <div className="contenedor-nav">
 
                     <div className="nav-logo" id="logo">
-                        <img src="img/logo.png" alt="logo"/>
+                        <img src="img/logo.png" alt="logo" />
                         <h1>U Can Save</h1>
                     </div>
 
@@ -49,11 +49,19 @@ function Navbar() {
                         <li className="nav-item">
                             <a href="/formulario" className="nav-link">Formulario</a>
                         </li>
-                        
+
+                        {usuario && (
+                            <li className="nav-item">
+                                <a href="/mis-apadrinamientos" className="nav-link" style={{ color: '#2c7a7b', fontWeight: 'bold' }}>
+                                    Mis Apadrinamientos
+                                </a>
+                            </li>
+                        )}
+
                         {/* 3. MENU ADMIN: Solo se muestra si el rol es ADMIN */}
                         {usuario && usuario.rol === "ADMIN" && (
                             <li className="nav-item">
-                                <a href="/menu-admin" className="nav-link" style={{color: '#e63946', fontWeight: 'bold'}}>Admin</a>
+                                <a href="/menu-admin" className="nav-link" style={{ color: '#e63946', fontWeight: 'bold' }}>Admin</a>
                             </li>
                         )}
                     </ul>
