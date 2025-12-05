@@ -6,7 +6,7 @@ function Navbar() {
     const [usuario, setUsuario] = useState(null);
     const navigate = useNavigate();
 
-    // 1. Al cargar el Navbar, buscamos si hay usuario en localStorage
+    // al cargar el navbar, se busca si hay usuario en localStorage
     useEffect(() => {
         const usuarioGuardado = localStorage.getItem("usuario");
         if (usuarioGuardado) {
@@ -14,7 +14,7 @@ function Navbar() {
         }
     }, []);
 
-    // 2. Función para Cerrar Sesión
+    // función para cerrar sesión
     const handleLogout = () => {
         localStorage.removeItem("usuario"); 
         setUsuario(null); 
@@ -58,7 +58,7 @@ function Navbar() {
                             </li>
                         )}
 
-                        {/* 3. MENU ADMIN: Solo se muestra si el rol es ADMIN */}
+                        {/* solo se muestra si el rol es ADMIN */}
                         {usuario && usuario.rol === "ADMIN" && (
                             <li className="nav-item">
                                 <a href="/menu-admin" className="nav-link" style={{ color: '#e63946', fontWeight: 'bold' }}>Admin</a>
@@ -71,7 +71,7 @@ function Navbar() {
                         <a href="/apadrinamiento" className="btn-apadrina">Apadrina</a>
 
                         {usuario ? (
-                            // Mostramos saludo y botón salir
+                            //  saludo y botón salir
                             <div className="usuario-info">
                                 <span className="saludo">Hola, {usuario.nombre}</span>
                                 <button onClick={handleLogout} className="btn-logout">
@@ -79,7 +79,7 @@ function Navbar() {
                                 </button>
                             </div>
                         ) : (
-                            // Mostramos Login
+                            //  login
                             <a href="/login-registro" className="btn-login_register">Login / Registro</a>
                         )}
                     </div>

@@ -32,7 +32,6 @@ function MisApadrinamientos() {
 
     return (
         <main>
-            {/* Contenedor principal con margen superior para el Navbar */}
             <div className="contenedor-historial">
                 <div className="encabezado-pagina" style={{textAlign: 'center', marginBottom: '30px'}}>
                     <h1 style={{color: '#333'}}>Mis Apadrinamientos</h1>

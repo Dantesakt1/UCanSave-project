@@ -9,11 +9,11 @@ function LoginRegister() {
     const navigate = useNavigate();
     const [message, setMessage] = useState({ type: '', text: '' });
 
-    // Login
+    // login
     const [loginEmail, setLoginEmail] = useState('');
     const [loginPassword, setLoginPassword] = useState('');
     
-    // Registro
+    // registro
     const [registerNombre, setRegisterNombre] = useState(''); 
     const [registerApellido, setRegisterApellido] = useState('');
     const [registerEmail, setRegisterEmail] = useState('');
@@ -47,7 +47,6 @@ function LoginRegister() {
         }
 
         try {
-            // LOGIN SIMULADO (Traer todos y buscar)
             const usuariosBD = await getUsuarios();
             const usuarioEncontrado = usuariosBD.find(u => u.email === loginEmail && u.passwordHash === loginPassword);
 
@@ -84,7 +83,7 @@ function LoginRegister() {
             await saveUsuario(nuevoUsuario);
             displayMessage('success', '¡Registro exitoso! Por favor inicia sesión.');
             
-            // Limpiar y cambiar a Login
+            // limpiar y cambiar a login
             setRegisterNombre(''); setRegisterApellido(''); setRegisterEmail(''); setRegisterPassword(''); setConfirmPassword('');
             setIsRegisterView(false);
         } catch (error) {
@@ -93,13 +92,13 @@ function LoginRegister() {
         }
     };
     
-    // centrado flexbox (soluciona el problema de clics bloqueados)
+    // centrado flexbox (para solucionar el problema de clics bloqueados)
     const mainStyle = { 
         display: 'flex', justifyContent: 'center', alignItems: 'center', 
         minHeight: '85vh', paddingTop: '80px', backgroundColor: '#fff' 
     };
 
-    // Estilo para que el boton parezca un link
+    // estilo para que el boton parezca un link
     const textButtonStyle = {
         background: 'none', border: 'none', padding: '0 5px',
         color: '#009579', fontWeight: 'bold', fontSize: '17px',
@@ -109,7 +108,7 @@ function LoginRegister() {
     return (
         <main style={mainStyle}> 
             
-            {/* Mensaje Flotante */}
+            {/* mensaje flotante */}
             {message.text && (
                 <div style={{
                     position: 'absolute', top: '90px', zIndex: 100,
