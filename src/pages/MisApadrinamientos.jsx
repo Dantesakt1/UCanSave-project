@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/estilo.css'; // Asegúrate de haber pegado el CSS aquí
+import '../css/estilo.css'; 
 import { getApadrinamientosByUsuarioId } from '../api_rest';
 
 function MisApadrinamientos() {
@@ -51,7 +51,7 @@ function MisApadrinamientos() {
                         <a href="/apadrinamiento" className="btn-apadrina">Ir a la Galería</a>
                     </div>
                 ) : (
-                    <div style={{overflowX: 'auto'}}> {/* Permite scroll horizontal en celular */}
+                    <div style={{overflowX: 'auto'}}>
                         <table className="tabla-bonita">
                             <thead>
                                 <tr>

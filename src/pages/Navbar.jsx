@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importamos useNavigate para redireccionar al salir
+import { useNavigate } from 'react-router-dom'; 
 import '../css/estilo.css';
 
 function Navbar() {
@@ -16,10 +16,10 @@ function Navbar() {
 
     // 2. Función para Cerrar Sesión
     const handleLogout = () => {
-        localStorage.removeItem("usuario"); // Borramos datos
-        setUsuario(null); // Limpiamos estado
-        navigate('/login-registro'); // Redirigimos al login
-        window.location.reload(); // Forzamos recarga para limpiar cualquier dato en memoria
+        localStorage.removeItem("usuario"); 
+        setUsuario(null); 
+        navigate('/login-registro'); 
+        window.location.reload(); 
     };
 
     return (
@@ -70,9 +70,8 @@ function Navbar() {
                     <div className="nav-btn">
                         <a href="/apadrinamiento" className="btn-apadrina">Apadrina</a>
 
-                        {/* 4. LOGICA CONDICIONAL */}
                         {usuario ? (
-                            // SI HAY USUARIO: Mostramos saludo y botón salir
+                            // Mostramos saludo y botón salir
                             <div className="usuario-info">
                                 <span className="saludo">Hola, {usuario.nombre}</span>
                                 <button onClick={handleLogout} className="btn-logout">
@@ -80,7 +79,7 @@ function Navbar() {
                                 </button>
                             </div>
                         ) : (
-                            // NO HAY USUARIO: Mostramos Login
+                            // Mostramos Login
                             <a href="/login-registro" className="btn-login_register">Login / Registro</a>
                         )}
                     </div>

@@ -8,7 +8,7 @@ function SidebarAdmin() {
 
     const handleLogout = () => {
         console.log("Cerrando sesión...");
-        navigate('/'); // Redirige al menú principal
+        navigate('/'); 
     };
 
     return (
@@ -16,7 +16,6 @@ function SidebarAdmin() {
             <nav className="sidebar"> 
                 <br />
                 <br /> 
-                {/* Asume que la imagen está en public/img */}
                 <h2></h2>
                 <ul>
                     <li><Link to="/menu-admin">Inicio</Link></li>
@@ -33,7 +32,5 @@ function SidebarAdmin() {
         </header>
     );
 }
-
-// Recuerda añadir la clase .logout-button a tu menu_adm.css
 
 export default SidebarAdmin;
