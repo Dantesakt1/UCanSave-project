@@ -3,31 +3,29 @@ import { useNavigate } from "react-router-dom"; // Para redirigir
 import '../css/carrito.css';
 
 const Carrito = () => {
-    // 1. ESTADO: El carrito empieza como un array vacío
+    // el carrito empieza como un array vacío
     const [carrito, setCarrito] = useState([]);
     const navigate = useNavigate();
 
-    // 2. CARGAR: Al iniciar, leemos el localStorage
+    // se lee el localStorage
     useEffect(() => {
         const carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
         setCarrito(carritoGuardado);
     }, []);
 
-    // --- FUNCIONES DE CONTROL (Lógica simple) ---
-
-    // Función auxiliar para guardar en Estado y LocalStorage a la vez
+    // para guardar en estado y localstorage a la vez
     const guardarEstado = (nuevoCarrito) => {
         setCarrito(nuevoCarrito);
         localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
     };
 
     const aumentarCantidad = (index) => {
-        // Copiamos el carrito para no editar el estado directamente
+        // copiamos el carrito para no editar el estado directamente
         const nuevoCarrito = [...carrito];
         const item = nuevoCarrito[index];
 
         item.cantidad = (item.cantidad || 1) + 1;
-        // Actualizamos el subtotal de ese item (Precio * Cantidad)
+        // actualizamos el subtotal de ese item (precio * cantidad)
         item.total = item.precio * item.cantidad;
 
         guardarEstado(nuevoCarrito);
@@ -42,7 +40,7 @@ const Carrito = () => {
             item.total = item.precio * item.cantidad;
             guardarEstado(nuevoCarrito);
         } else {
-            // Si la cantidad es 1 y resta, preguntamos si quiere borrarlo
+            // si la cantidad es 1 y resta, preguntamos si quiere borrarlo
             eliminarDelCarrito(index);
         }
     };
@@ -50,7 +48,7 @@ const Carrito = () => {
     const eliminarDelCarrito = (index) => {
         if (window.confirm("¿Estás seguro de eliminar este animal?")) {
             const nuevoCarrito = [...carrito];
-            // Borramos 1 elemento en la posición 'index'
+            // borramos 1 elemento en la posición 'index'
             nuevoCarrito.splice(index, 1);
             guardarEstado(nuevoCarrito);
         }
@@ -58,7 +56,6 @@ const Carrito = () => {
 
     const calcularTotalGeneral = () => {
         let total = 0;
-        // Bucle for clásico para sumar
         for (let i = 0; i < carrito.length; i++) {
             total += (parseFloat(carrito[i].precio) * (carrito[i].cantidad || 1));
         }
@@ -66,21 +63,21 @@ const Carrito = () => {
     };
 
     const procesarCompra = () => {
-        // 1. Validar si el carrito está vacío
+        // validar si el carrito está vacío
         if (carrito.length === 0) {
             alert("Tu carrito está vacío.");
             return;
         }
 
-        // 2. Validar si hay usuario logueado
+        // validar si hay usuario logueado
         const usuario = localStorage.getItem("usuario");
         if (!usuario) {
             alert("Para apadrinar, necesitas iniciar sesión o registrarte.");
-            navigate("/login-registro"); // Te manda al login
+            navigate("/login-registro"); // te manda al login
             return;
         }
 
-        // 3. Si todo ok, vamos al Checkout
+        // si todo ok, se va al pago
         navigate("/checkout");
     };
 
@@ -89,8 +86,6 @@ const Carrito = () => {
             <section>
                 <h1>Carrito de compras</h1>
                 <hr/>
-                
-                {/* Contenedor de la tabla (usamos el ID 'detalle' para que tu CSS funcione igual) */}
                 <div id="detalle" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     
                     {carrito.length === 0 ? (
@@ -102,7 +97,6 @@ const Carrito = () => {
                         </div>
                     ) : (
                         <>
-                            {/* TABLA DE PRODUCTOS */}
                             <table>
                                 <thead>
                                     <tr>
@@ -116,7 +110,6 @@ const Carrito = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {/* Renderizamos cada fila con .map */}
                                     {carrito.map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.idAnimal}</td>
@@ -127,7 +120,6 @@ const Carrito = () => {
                                                 <span style={{margin: '0 10px'}}>{item.cantidad || 1}</span>
                                                 <button className="btn-cantidad" onClick={() => aumentarCantidad(index)}>+</button>
                                             </td>
-                                            {/* Calculamos el total de la fila al vuelo */}
                                             <td>${(parseInt(item.precio) * (item.cantidad || 1)).toLocaleString('es-CL')}</td>
                                             <td>
                                                 <img src={item.imagen || "/img/sin-imagen.jpg"} alt={item.nombre} />

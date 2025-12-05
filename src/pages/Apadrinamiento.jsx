@@ -59,7 +59,6 @@ const Apadrinamiento = () => {
         if (filtroActivo === 'todos') return true;
         // Accedemos a la categoría dentro del objeto especie
         const categoriaNombre = animal.especie?.categoria?.nombreCategoria || ""; 
-        // Nota: Ajusta 'nombreCategoria' si en tu BD se llama diferente, ej: 'descripcion'
         
         // Mapeo manual si tu BD tiene nombres complejos, o comparación directa:
         // Asumiendo que en BD tienes "Terrestre", "Marino", "Aéreo"
@@ -81,11 +80,9 @@ const Apadrinamiento = () => {
                     ))}
                 </div>
 
-                {/* CAMBIO CLAVE: Usamos 'contenedor-animales' para arreglar el diseño */}
                 <div className="contenedor-animales"> 
                     {animalesFiltrados.length > 0 ? (
                         animalesFiltrados.map((animal) => (
-                            // ESTA ES TU FICHA ORIGINAL RESTAURADA
                             <div className="ficha" key={animal.idAnimal}>
                                 
                                 <img 
@@ -97,7 +94,6 @@ const Apadrinamiento = () => {
                                 <h3>{animal.nombreAnimal}</h3>
                                 <hr/>
                                 
-                                {/* Datos traídos desde la relación con Especie en Java */}
                                 <p>Especie: {animal.especie ? animal.especie.nombreCientifico : "Desconocida"}</p>
                                 
                                 <p>⚠️ En peligro: {animal.especie ? animal.especie.amenazasPrincipales : "Sin datos"}</p>
