@@ -27,17 +27,16 @@ const Apadrinamiento = () => {
 
     // --- AGREGAR AL CARRITO ---
     const agregarAlCarrito = (animal) => {
-        // Lógica del carrito (reutilizamos la lógica de cantidad)
         let nuevoCarrito = [...carrito];
         const index = nuevoCarrito.findIndex(item => item.idAnimal === animal.idAnimal);
 
         if (index !== -1) {
-            // Si ya existe, aumentamos cantidad (opcional, según tu lógica vieja)
+            // si ya existe, aumentamos cantidad
             nuevoCarrito[index].cantidad = (nuevoCarrito[index].cantidad || 1) + 1;
         } else {
-            // Si es nuevo, lo agregamos adaptando los nombres para que coincidan con tu carrito viejo
+            // si es nuevo, lo agregamos adaptando los nombres para que coincidan con tu carrito viejo
             nuevoCarrito.push({
-                idAnimal: animal.idAnimal, // Tu ID de base de datos
+                idAnimal: animal.idAnimal,
                 nombre: animal.nombreAnimal,
                 precio: animal.costoApadrinamiento,
                 imagen: animal.urlImagen,
@@ -57,11 +56,7 @@ const Apadrinamiento = () => {
     // --- FILTRADO ---
     const animalesFiltrados = animales.filter(animal => {
         if (filtroActivo === 'todos') return true;
-        // Accedemos a la categoría dentro del objeto especie
         const categoriaNombre = animal.especie?.categoria?.nombreCategoria || ""; 
-        
-        // Mapeo manual si tu BD tiene nombres complejos, o comparación directa:
-        // Asumiendo que en BD tienes "Terrestre", "Marino", "Aéreo"
         return categoriaNombre.toLowerCase().includes(filtroActivo.toLowerCase());
     });
 
@@ -70,7 +65,6 @@ const Apadrinamiento = () => {
             <section className="galeria">
                 <h2>Apadrina algún animal !</h2>
                 
-                {/* Botones de Filtro */}
                 <div className="filtros-categoria" style={{ textAlign: 'center', margin: '20px 0' }}>
                     {['todos', 'terrestre', 'marino', 'aereo'].map(filtro => (
                         <button key={filtro} className={`btn-filtro ${filtroActivo === filtro ? 'activo' : ''}`}
