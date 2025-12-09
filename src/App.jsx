@@ -21,44 +21,72 @@ import PagoExitoso from './pages/PagoExitoso'
 import PagoFallido from './pages/PagoFallido'
 import MisApadrinamientos from './pages/MisApadrinamientos'
 import './css/pagos.css';
-
-
+import ProtectedRoute from './pages/ProtectedRoute'; // <--- IMPORTANTE
 
 function App() {
-
   return (
     <>
-
-
-
       <Router>
-
         <Navbar />
         <Routes>
-          {/* Rutas y componentes aquí */}
+          {/* --- RUTAS PÚBLICAS (Cualquiera entra) --- */}
           <Route path='/' element={<Menu />} />
-          <Route path='/apadrinamiento' element={<Apadrinamiento />} />
-          <Route path='/formulario' element={<Formulario />} />
-          <Route path='/carrito' element={<Carrito />} />
           <Route path='/noticias' element={<Noticias />} />
           <Route path='/noticia/1' element={<Noticia_1 />} />
           <Route path='/noticia/2' element={<Noticia_2 />} />
           <Route path='/login-registro' element={<LoginRegister />} />
-          <Route path='/menu-admin' element={<MenuAdmin />} />
-          <Route path='/admin-animales' element={<AdminAnimales />} />
-          <Route path='/admin-usuarios' element={<AdminUsuarios />} />
-          <Route path='/checkout' element={<Checkout />} />
-          <Route path='/pago-exitoso' element={<PagoExitoso />} />
-          <Route path='/pago-fallido' element={<PagoFallido />} />
-          <Route path='/mis-apadrinamientos' element={<MisApadrinamientos />} />
+          <Route path='/formulario' element={<Formulario />} />
+          <Route path='/apadrinamiento' element={<Apadrinamiento />} />
 
+          {/* --- RUTAS DE USUARIO (Requieren estar logueado, pero no ser admin) --- */}
+          <Route path='/carrito' element={
+            <ProtectedRoute>
+              <Carrito />
+            </ProtectedRoute>
+          } />
+          
+          <Route path='/checkout' element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          } />
+
+          <Route path='/mis-apadrinamientos' element={
+            <ProtectedRoute>
+              <MisApadrinamientos />
+            </ProtectedRoute>
+          } />
+
+          <Route path='/pago-exitoso' element={
+            <ProtectedRoute>
+              <PagoExitoso />
+            </ProtectedRoute>
+          } />
+
+          {/* --- RUTAS DE ADMIN (Requieren Login + Rol ADMIN) --- */}
+          <Route path='/menu-admin' element={
+            <ProtectedRoute requireAdmin={true}>
+              <MenuAdmin />
+            </ProtectedRoute>
+          } />
+
+          <Route path='/admin-animales' element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminAnimales />
+            </ProtectedRoute>
+          } />
+
+          <Route path='/admin-usuarios' element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminUsuarios />
+            </ProtectedRoute>
+          } />
 
         </Routes>
       </Router>
-
       <Footer />
     </>
   )
 }
 
-export default App
+export default App;

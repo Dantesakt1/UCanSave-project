@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import AdminAnimales from '../pages/AdminAnimales'; 
 import { describe, expect, test, vi, afterEach } from 'vitest';
 
-// --- (Mocks de localStorage, confirm, y script se mantienen igual) ---
+// --- Mocks de localStorage ---
 const localStorageMock = (() => {
     let store = {};
     return {
@@ -30,16 +30,15 @@ afterEach(() => {
 
 describe('Testing Componente AdminAnimales', () => {
 
-    // Test 1: Renderizado (Pasa)
+    // Test 1: Renderizado
     test('Debe renderizar la página de admin y la tabla vacía', () => {
         render(<MemoryRouter><AdminAnimales /></MemoryRouter>);
         expect(screen.getByRole('heading', { name: /¡Animales!/i })).toBeInTheDocument();
-        // ... (resto del test pasa) ...
         const tbody = screen.getByRole('table').querySelector('tbody');
         expect(tbody.rows.length).toBe(0); 
     });
 
-    // Test 2: Carga de Datos (Pasa)
+    // Test 2: Carga de Datos
     test('Debe cargar y mostrar animales desde localStorage', async () => {
         const mockAnimales = [{ id: 1, nombre: 'Panchito', especie: 'Pudú', precio: 5000, categoria: 'terrestre', img: 'pudu.jpg' }];
         localStorageMock.setItem('listaAnimales', JSON.stringify(mockAnimales));
@@ -48,7 +47,7 @@ describe('Testing Componente AdminAnimales', () => {
         expect(screen.getByText('$5.000')).toBeInTheDocument(); 
     });
 
-    // Test 3: Agregar un nuevo animal (CORREGIDO)
+    // Test 3: Agregar un nuevo animal
     test('Debe agregar un animal y mostrarlo en la tabla', async () => {
         const user = userEvent.setup();
         render(
@@ -64,21 +63,18 @@ describe('Testing Componente AdminAnimales', () => {
 
         // 2. Llenar el formulario
         const textInputs = within(modal).getAllByRole('textbox');
-        const numberInput = within(modal).getByRole('spinbutton'); // <input type="number">
-        const selectInput = within(modal).getByRole('combobox'); // <select>
+        const numberInput = within(modal).getByRole('spinbutton'); 
+        const selectInput = within(modal).getByRole('combobox'); 
         
         await user.type(textInputs[0], 'Nuevo Pudú');
         await user.type(textInputs[1], 'Pudu puda');
         await user.selectOptions(selectInput, 'terrestre');
-        
-        // --- LA CORRECCIÓN ESTÁ AQUÍ ---
-        await user.clear(numberInput); // Borra el '5000' por defecto
-        await user.type(numberInput, '7500'); // Escribe el nuevo valor
-        // --- FIN DE LA CORRECCIÓN ---
+        await user.clear(numberInput); 
+        await user.type(numberInput, '7500'); 
 
-        await user.type(textInputs[2], 'Peligroso'); // Peligro (textarea)
-        await user.type(textInputs[3], 'Rescatado'); // Rescate (textarea)
-        await user.type(textInputs[4], 'img.jpg'); // Imagen (input)
+        await user.type(textInputs[2], 'Peligroso'); 
+        await user.type(textInputs[3], 'Rescatado'); 
+        await user.type(textInputs[4], 'img.jpg'); 
         
         // 3. Guardar
         await user.click(within(modal).getByRole('button', { name: /Guardar/i }));
@@ -86,7 +82,6 @@ describe('Testing Componente AdminAnimales', () => {
         // 4. Verificar
         expect(screen.queryByRole('heading', { name: /Agregar Animal/i })).not.toBeInTheDocument();
         expect(await screen.findByText('Nuevo Pudú')).toBeInTheDocument();
-        // Ahora sí debería encontrar $7.500
         expect(screen.getByText('$7.500')).toBeInTheDocument(); 
         expect(localStorageMock.setItem).toHaveBeenCalledWith(
             'listaAnimales', 
@@ -94,7 +89,7 @@ describe('Testing Componente AdminAnimales', () => {
         );
     });
     
-    // Test 4: Editar un animal (Pasa)
+    // Test 4: Editar un animal 
     test('Debe editar un animal', async () => {
         const user = userEvent.setup();
         const mockAnimales = [
@@ -112,20 +107,20 @@ describe('Testing Componente AdminAnimales', () => {
         const modal = await screen.findByRole('heading', { name: /Editar Animal/i });
         const modalContainer = modal.closest('div.modal');
 
-        // 4. Llenar TODOS los campos (incluyendo el clear en precio)
+        // 4. Llenar TODOS los campos
         const textInputs = within(modalContainer).getAllByRole('textbox');
         const numberInput = within(modalContainer).getByRole('spinbutton');
         const selectInput = within(modalContainer).getByRole('combobox');
         
-        await user.clear(textInputs[0]); // Nombre
+        await user.clear(textInputs[0]); 
         await user.type(textInputs[0], 'Panchito Editado');
-        await user.type(textInputs[1], 'Pudu puda (Editado)'); // Especie
-        await user.selectOptions(selectInput, 'marino'); // Categoría
-        await user.clear(numberInput); // Precio
-        await user.type(numberInput, '9990'); // Precio
-        await user.type(textInputs[2], 'Editado Peligro'); // Peligro
-        await user.type(textInputs[3], 'Editado Rescate'); // Rescate
-        await user.type(textInputs[4], 'img-editada.jpg'); // Imagen
+        await user.type(textInputs[1], 'Pudu puda (Editado)'); 
+        await user.selectOptions(selectInput, 'marino'); 
+        await user.clear(numberInput); 
+        await user.type(numberInput, '9990'); 
+        await user.type(textInputs[2], 'Editado Peligro'); 
+        await user.type(textInputs[3], 'Editado Rescate');
+        await user.type(textInputs[4], 'img-editada.jpg'); 
 
         // 6. Guardar
         await user.click(within(modalContainer).getByRole('button', { name: /Guardar/i }));
@@ -136,7 +131,7 @@ describe('Testing Componente AdminAnimales', () => {
         expect(screen.queryByText('Panchito')).not.toBeInTheDocument();
     });
 
-    // Test 5: Eliminar un animal (Pasa)
+    // Test 5: Eliminar un animal 
     test('Debe eliminar un animal de la tabla', async () => {
         const user = userEvent.setup();
         const mockAnimales = [

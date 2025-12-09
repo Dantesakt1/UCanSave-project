@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-// Importamos las funciones de tu archivo api_rest
 import { saveFormulario, getRangosExperiencia } from "../api_rest";
 
 function Formulario() {

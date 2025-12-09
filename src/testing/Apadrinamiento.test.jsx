@@ -16,20 +16,18 @@ const localStorageMock = (() => {
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-// --- Mock de Funciones Globales (Script.js) ---
+// --- Mock de Funciones Globales  ---
 window.renderCatalogo = vi.fn();
 window.agregarAnimal = vi.fn();
 window.listaAnimalesInicial = [];
 
-// --- (INICIO) CORRECCIÓN CLAVE: Mock "Inteligente" de appendChild ---
 
-// 1. Guardar la función original ANTES de que sea espiada
+// 1. Guardar la función original
 const originalAppendChild = document.body.appendChild.bind(document.body);
 
 beforeEach(() => {
-    // 2. Espiar y reemplazar
     vi.spyOn(document.body, 'appendChild').mockImplementation((node) => {
-        // 3. Revisar qué se está añadiendo
+        //  Revisar qué se está añadiendo
         if (node && node.tagName === 'SCRIPT') {
             // SI es un script, simular carga asíncrona
             Promise.resolve().then(() => {
@@ -39,7 +37,7 @@ beforeEach(() => {
             });
             return node;
         }
-        // NO es un script (ej: el div de RTL), llamar a la función original
+        // NO es un script, llamar a la función original
         return originalAppendChild(node);
     });
 
@@ -58,7 +56,6 @@ afterEach(() => {
     vi.restoreAllMocks(); // Restaura TODOS los spies, incluyendo appendChild
     cleanup();
 });
-// --- (FIN) CORRECCIÓN CLAVE ---
 
 
 // Datos de prueba para los filtros
@@ -71,39 +68,35 @@ const mockAnimales = [
 
 describe('Testing Componente Apadrinamiento', () => {
 
-    // Test 1: Renderizado (Corregido con async/await)
+    // Test Renderizado
     test('Debe renderizar el título y los botones de filtro', async () => {
         render(<MemoryRouter><Apadrinamiento /></MemoryRouter>);
 
-        // 1. Verificar contenido estático (¡Ahora sí debería aparecer!)
+        // Verificar contenido estático 
         expect(screen.getByRole('heading', { name: /Apadrina algún animal/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Todos/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Terrestres/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Marinos/i })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Aéreos/i })).toBeInTheDocument();
 
-        // 2. Esperar a que los efectos asíncronos (useEffect) terminen
-        // 1ra llamada: renderCatalogo([]) (estado inicial)
-        // 2da llamada: renderCatalogo([]) (después de cargar scripts con listaAnimalesInicial vacía)
+        // Esperar a que el useEffect termine
         await vi.waitFor(() => {
             expect(window.renderCatalogo).toHaveBeenCalledTimes(2);
         });
     });
 
-    // Test 2: Carga inicial de datos
+    // Test Carga inicial de datos
     test('Debe cargar animales de localStorage y llamar a renderCatalogo con "todos"', async () => {
         localStorageMock.setItem('listaAnimales', JSON.stringify(mockAnimales));
         render(<MemoryRouter><Apadrinamiento /></MemoryRouter>);
 
         await vi.waitFor(() => {
-            // 1. renderCatalogo([]) (estado inicial)
-            // 2. renderCatalogo(mockAnimales) (después de cargar scripts y setear estado)
             expect(window.renderCatalogo).toHaveBeenCalledTimes(2);
         });
         expect(window.renderCatalogo).toHaveBeenLastCalledWith(mockAnimales);
     });
 
-    // Test 3: Simulación de Evento (Clic en Filtro "Marinos")
+    // Test Simulación de Evento (Click en Filtro "Marinos")
     test('Debe llamar a renderCatalogo con animales filtrados al hacer clic en "Marinos"', async () => {
         const user = userEvent.setup();
         localStorageMock.setItem('listaAnimales', JSON.stringify(mockAnimales));
@@ -128,7 +121,7 @@ describe('Testing Componente Apadrinamiento', () => {
         expect(window.renderCatalogo).toHaveBeenCalledWith(animalesMarinos);
     });
 
-    // Test 4: Simulación de Evento (Clic en Filtro "Terrestres")
+    // Test Simulación de Evento (Clic en Filtro "Terrestres")
     test('Debe llamar a renderCatalogo con animales filtrados al hacer clic en "Terrestres"', async () => {
         const user = userEvent.setup();
         localStorageMock.setItem('listaAnimales', JSON.stringify(mockAnimales));

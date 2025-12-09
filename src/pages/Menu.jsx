@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 import '../css/estilo.css';
 
 const Menu = () => {

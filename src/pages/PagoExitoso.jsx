@@ -6,7 +6,7 @@ function PagoExitoso() {
         <main>
             <div className="resultado-pago-container">
                 <div className="icono-exito">
-                    ✓ {/* Símbolo de check */}
+                    ✓
                 </div>
                 <h1 style={{ color: '#44b699' }}>¡Pago Exitoso!</h1>
                 <p>Tu apadrinamiento ha sido procesado correctamente. Hemos enviado un comprobante a tu correo.</p>

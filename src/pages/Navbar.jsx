@@ -58,7 +58,6 @@ function Navbar() {
                             </li>
                         )}
 
-                        {/* solo se muestra si el rol es ADMIN */}
                         {usuario && usuario.rol === "ADMIN" && (
                             <li className="nav-item">
                                 <a href="/menu-admin" className="nav-link" style={{ color: '#e63946', fontWeight: 'bold' }}>Admin</a>
@@ -66,7 +65,6 @@ function Navbar() {
                         )}
                     </ul>
 
-                    {/* BOTONES */}
                     <div className="nav-btn">
                         <a href="/apadrinamiento" className="btn-apadrina">Apadrina</a>
 

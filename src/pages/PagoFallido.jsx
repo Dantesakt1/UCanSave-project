@@ -11,7 +11,6 @@ function PagoFallido() {
                 <h1 style={{ color: '#e63946' }}>Pago Fallido</h1>
                 <p>Hubo un error al procesar tu pago. La transacción fue rechazada por el banco.</p>
                 <p>Por favor, verifica tus datos e inténtalo nuevamente.</p>
-                {/* El botón para reintentar vuelve al checkout */}
                 <Link to="/checkout" className="btn-reintentar">Volver a Intentar el Pago</Link>
             </div>
         </main>

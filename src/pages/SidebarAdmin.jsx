@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// Importa el CSS específico. Si está en src/css:
 import '../css/menu_adm.css'; 
 
 function SidebarAdmin() {
