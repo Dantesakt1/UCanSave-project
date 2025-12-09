@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/login_reg.css'; 
 import '../css/estilo.css'; 
-import { saveUsuario, getUsuarios } from '../api_rest';
+import { loginUsuario, registrarUsuario } from '../api_rest';
 
 function LoginRegister() {
     const [isRegisterView, setIsRegisterView] = useState(false);
@@ -23,7 +23,7 @@ function LoginRegister() {
     function validateEmail(email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) return false;
-        const allowedDomains = ['gmail.com', 'duocuc.cl', 'ucansave.com'];
+        const allowedDomains = ['gmail.com','gmail.cl', 'duocuc.cl', 'ucansave.com', 'hotmail.com'];
         const domain = email.split('@').pop().toLowerCase();
         return allowedDomains.includes(domain);
     }
@@ -33,41 +33,55 @@ function LoginRegister() {
         setTimeout(() => setMessage({ type: '', text: '' }), 4000); 
     };
 
+    // --- NUEVA LÓGICA DE LOGIN (ACTUALIZADA) ---
     const handleLogin = async (e) => {
         e.preventDefault();
         setMessage({ type: '', text: '' }); 
 
         if (loginPassword.trim() === "") return displayMessage('error', 'Ingresa tu contraseña.');
 
+        // BACKDOOR DE ADMIN (Sigue igual para tus pruebas)
         if (loginEmail === "admin@ucansave.com" && loginPassword === "admin123") {
             localStorage.setItem("usuario", JSON.stringify({ nombre: "Admin", rol: "ADMIN" }));
+            localStorage.setItem("token", "token-falso-admin"); 
             displayMessage('success', 'Bienvenido admin');
             setTimeout(() => navigate('/menu-admin'), 1000); 
             return;
         }
 
         try {
-            const usuariosBD = await getUsuarios();
-            const usuarioEncontrado = usuariosBD.find(u => u.email === loginEmail && u.passwordHash === loginPassword);
+            // 1. CAPTURAMOS LA RESPUESTA (Token + Nombre)
+            const response = await loginUsuario({ 
+                email: loginEmail, 
+                password: loginPassword 
+            });
 
-            if (usuarioEncontrado) {
-                localStorage.setItem("usuario", JSON.stringify(usuarioEncontrado));
-                displayMessage('success', `¡Hola ${usuarioEncontrado.nombre}!`);
-                setTimeout(() => navigate('/'), 1000);
-            } else {
-                displayMessage('error', 'Credenciales incorrectas.');
-            }
+            // 2. USAMOS EL NOMBRE REAL QUE VIENE DEL SERVIDOR
+            const usuarioData = {
+                nombre: response.nombre, // <--- AQUÍ ESTÁ EL CAMBIO: Ya no dice "Usuario" fijo
+                email: loginEmail,
+                rol: "USER"
+            };
+            
+            // Guardamos en el navegador
+            localStorage.setItem("usuario", JSON.stringify(usuarioData));
+
+            // 3. SALUDO PERSONALIZADO
+            displayMessage('success', `¡Hola ${response.nombre}!`);
+            setTimeout(() => navigate('/'), 1000);
+
         } catch (error) {
             console.error(error);
-            displayMessage('error', 'Error de conexión con el servidor.');
+            displayMessage('error', 'Credenciales incorrectas o usuario no existe.');
         }
     };
     
+    // --- LÓGICA DE REGISTRO ---
     const handleRegister = async (e) => {
         e.preventDefault();
 
         if (!registerNombre.trim() || !registerApellido.trim()) return displayMessage('error', 'Faltan datos personales.');
-        if (!validateEmail(registerEmail)) return displayMessage('error', 'Correo inválido (@gmail, @duoc, @ucansave).');
+        if (!validateEmail(registerEmail)) return displayMessage('error', 'Correo inválido (@gmail.com/cl, @duoc.com, @ucansave.com).');
         if (registerPassword.length < 6) return displayMessage('error', 'Contraseña muy corta (mín 6).');
         if (confirmPassword !== registerPassword) return displayMessage('error', 'Las contraseñas no coinciden.');
 
@@ -80,25 +94,23 @@ function LoginRegister() {
         };
 
         try {
-            await saveUsuario(nuevoUsuario);
-            displayMessage('success', '¡Registro exitoso! Por favor inicia sesión.');
+            await registrarUsuario(nuevoUsuario);
+            displayMessage('success', '¡Registro exitoso! Ya puedes iniciar sesión.');
             
-            // limpiar y cambiar a login
             setRegisterNombre(''); setRegisterApellido(''); setRegisterEmail(''); setRegisterPassword(''); setConfirmPassword('');
-            setIsRegisterView(false);
+            setIsRegisterView(false); 
         } catch (error) {
             console.error(error);
-            displayMessage('error', 'No se pudo registrar. Quizás el correo ya existe.');
+            displayMessage('error', 'No se pudo registrar. El correo ya está en uso.');
         }
     };
     
-    // centrado flexbox (para solucionar el problema de clics bloqueados)
+    // ESTILOS
     const mainStyle = { 
         display: 'flex', justifyContent: 'center', alignItems: 'center', 
         minHeight: '85vh', paddingTop: '80px', backgroundColor: '#fff' 
     };
 
-    // estilo para que el boton parezca un link
     const textButtonStyle = {
         background: 'none', border: 'none', padding: '0 5px',
         color: '#009579', fontWeight: 'bold', fontSize: '17px',
@@ -108,7 +120,6 @@ function LoginRegister() {
     return (
         <main style={mainStyle}> 
             
-            {/* mensaje flotante */}
             {message.text && (
                 <div style={{
                     position: 'absolute', top: '90px', zIndex: 100,
@@ -121,7 +132,7 @@ function LoginRegister() {
             
             <div className="contenedor"> 
                 
-                {/* --- LOGIN --- */}
+                {/* LOGIN */}
                 {!isRegisterView && (
                     <div className="formulario inicio-sesion"> 
                         <header>Login</header>
@@ -144,7 +155,7 @@ function LoginRegister() {
                     </div>
                 )}
 
-                {/* --- REGISTRO --- */}
+                {/* REGISTRO */}
                 {isRegisterView && (
                     <div className="formulario registro">
                         <header>Registrarse</header>
