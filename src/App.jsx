@@ -21,7 +21,7 @@ import PagoExitoso from './pages/PagoExitoso'
 import PagoFallido from './pages/PagoFallido'
 import MisApadrinamientos from './pages/MisApadrinamientos'
 import './css/pagos.css';
-import ProtectedRoute from './pages/ProtectedRoute'; // <--- IMPORTANTE
+import ProtectedRoute from './pages/ProtectedRoute';
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          {/* --- RUTAS PÚBLICAS (Cualquiera entra) --- */}
+          {/* RUTAS PUBLICAS  */}
           <Route path='/' element={<Menu />} />
           <Route path='/noticias' element={<Noticias />} />
           <Route path='/noticia/1' element={<Noticia_1 />} />
@@ -38,7 +38,7 @@ function App() {
           <Route path='/formulario' element={<Formulario />} />
           <Route path='/apadrinamiento' element={<Apadrinamiento />} />
 
-          {/* --- RUTAS DE USUARIO (Requieren estar logueado, pero no ser admin) --- */}
+          {/* RUTAS DONDE SE NECESITA LOGIN */}
           <Route path='/carrito' element={
             <ProtectedRoute>
               <Carrito />
@@ -63,7 +63,7 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* --- RUTAS DE ADMIN (Requieren Login + Rol ADMIN) --- */}
+          {/* RUTAS DE ADMIN */}
           <Route path='/menu-admin' element={
             <ProtectedRoute requireAdmin={true}>
               <MenuAdmin />

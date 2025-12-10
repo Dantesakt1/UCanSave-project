@@ -7,7 +7,7 @@ const api = axios.create({
 });
 
 // INTERCEPTOR
-// Antes de enviar cualquier solicitud, revisa si hay un token guardado
+// antes de enviar cualquier evento revisa si hay un token guardado
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("token"); // Buscamos el token en el navegador
@@ -21,10 +21,10 @@ api.interceptors.request.use(
     }
 );
 
-// --- FUNCIONES DE AUTENTICACIÓN (LOGIN Y REGISTRO) ---
+// --- AUTENTICACION (LOGIN Y REGISTRO) ---
 
 export const loginUsuario = async (credenciales) => {
-    // Ruta: http://localhost:8011/auth/iniciar-sesion
+    // http://localhost:8011/auth/iniciar-sesion
     const response = await api.post("/auth/iniciar-sesion", credenciales);
     if (response.data.token) {
         localStorage.setItem("token", response.data.token);
@@ -33,7 +33,7 @@ export const loginUsuario = async (credenciales) => {
 };
 
 export const registrarUsuario = async (usuario) => {
-    // Ruta: http://localhost:8011/auth/registrar
+    // http://localhost:8011/auth/registrar
     const response = await api.post("/auth/registrar", usuario);
     if (response.data.token) {
         localStorage.setItem("token", response.data.token);
@@ -43,7 +43,7 @@ export const registrarUsuario = async (usuario) => {
 
 export const logoutUsuario = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login"; // Redirige al usuario
+    window.location.href = "/login"; // redirige al login
 };
 
 // ----------------------------------------------------

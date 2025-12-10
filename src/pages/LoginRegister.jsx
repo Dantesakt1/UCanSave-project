@@ -33,42 +33,40 @@ function LoginRegister() {
         setTimeout(() => setMessage({ type: '', text: '' }), 4000); 
     };
 
-    // --- NUEVA LÓGICA DE LOGIN (ACTUALIZADA) ---
+    // LOGIN
     const handleLogin = async (e) => {
         e.preventDefault();
         setMessage({ type: '', text: '' }); 
 
         if (loginPassword.trim() === "") return displayMessage('error', 'Ingresa tu contraseña.');
 
-        // BACKDOOR DE ADMIN (Sigue igual para tus pruebas)
-        if (loginEmail === "admin@ucansave.com" && loginPassword === "admin123") {
-            localStorage.setItem("usuario", JSON.stringify({ nombre: "Admin", rol: "ADMIN" }));
-            localStorage.setItem("token", "token-falso-admin"); 
-            displayMessage('success', 'Bienvenido admin');
-            setTimeout(() => navigate('/menu-admin'), 1000); 
-            return;
-        }
-
         try {
-            // 1. CAPTURAMOS LA RESPUESTA (Token + Nombre)
+            // login REAL al servidor 
             const response = await loginUsuario({ 
                 email: loginEmail, 
                 password: loginPassword 
             });
 
-            // 2. USAMOS EL NOMBRE REAL QUE VIENE DEL SERVIDOR
+            // si es el correo del admin para darle permisos en el menú
+            const esAdmin = loginEmail === "admin@ucansave.com"; 
+
+            // guardamos los datos
             const usuarioData = {
-                nombre: response.nombre, // <--- AQUÍ ESTÁ EL CAMBIO: Ya no dice "Usuario" fijo
+                nombre: response.nombre,
                 email: loginEmail,
-                rol: "USER"
+                // si es el correo del admin le da el rol de admin sino user
+                rol: esAdmin ? "ADMIN" : "USER" 
             };
             
-            // Guardamos en el navegador
             localStorage.setItem("usuario", JSON.stringify(usuarioData));
 
-            // 3. SALUDO PERSONALIZADO
-            displayMessage('success', `¡Hola ${response.nombre}!`);
-            setTimeout(() => navigate('/'), 1000);
+            displayMessage('success', `¡Bienvenido ${esAdmin ? '': ''} ${response.nombre}!`);
+            
+            if (esAdmin) {
+                setTimeout(() => navigate('/menu-admin'), 1000); // admin va al panel
+            } else {
+                setTimeout(() => navigate('/'), 1000); // usuario normal va al inicio
+            }
 
         } catch (error) {
             console.error(error);
@@ -76,7 +74,7 @@ function LoginRegister() {
         }
     };
     
-    // --- LÓGICA DE REGISTRO ---
+    // registro
     const handleRegister = async (e) => {
         e.preventDefault();
 

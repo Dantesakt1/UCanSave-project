@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../css/usuarios.css'; // Asegúrate de que este CSS exista
-// IMPORTAMOS LAS FUNCIONES DEL API
+import '../css/usuarios.css'; 
 import { getUsuarios, saveUsuario, updateUsuario, deleteUsuario } from '../api_rest';
 
 function AdminUsuarios() {
@@ -9,10 +8,9 @@ function AdminUsuarios() {
   const [modalAgregar, setModalAgregar] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
   
-  // ESTADO PARA EDICIÓN
   const [usuarioEditando, setUsuarioEditando] = useState(null);
+  const [passwordEdicion, setPasswordEdicion] = useState(''); 
 
-  // ESTADO PARA NUEVO USUARIO (Estructura idéntica a tu Java)
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: '',
     apellido: '',
@@ -20,7 +18,6 @@ function AdminUsuarios() {
     passwordHash: ''
   });
 
-  // --- 1. CARGAR USUARIOS (GET) ---
   const cargarUsuarios = async () => {
     try {
         const datos = await getUsuarios();
@@ -34,34 +31,31 @@ function AdminUsuarios() {
     cargarUsuarios();
   }, []);
 
-  // --- 2. AGREGAR USUARIO (POST) ---
   const handleSubmitAgregar = async (e) => {
     e.preventDefault();
     
-    // Preparar objeto para Java
     const usuarioParaEnviar = {
         nombre: nuevoUsuario.nombre,
         apellido: nuevoUsuario.apellido,
         email: nuevoUsuario.email,
-        passwordHash: nuevoUsuario.passwordHash,
-        fechaRegistro: new Date().toISOString() // Enviamos la fecha actual automática
+        passwordHash: nuevoUsuario.passwordHash, 
+        fechaRegistro: null 
     };
 
     try {
         await saveUsuario(usuarioParaEnviar);
         alert("Usuario creado exitosamente");
         setModalAgregar(false);
-        setNuevoUsuario({ nombre: '', apellido: '', email: '', passwordHash: '' }); // Limpiar
-        cargarUsuarios(); // Recargar tabla
+        setNuevoUsuario({ nombre: '', apellido: '', email: '', passwordHash: '' });
+        cargarUsuarios();
     } catch (error) {
         console.error(error);
         alert("Error al guardar. Posiblemente el email ya existe.");
     }
   };
 
-  // --- 3. ELIMINAR USUARIO (DELETE) ---
   const eliminarUsuario = async (id) => {
-    if (window.confirm("¿Estás seguro de eliminar este usuario de la BD?")) {
+    if (window.confirm("¿Estás seguro de eliminar este usuario?")) {
         try {
             await deleteUsuario(id);
             cargarUsuarios();
@@ -72,20 +66,36 @@ function AdminUsuarios() {
     }
   };
 
-  // --- 4. PREPARAR EDICIÓN ---
+
   const abrirModalEditar = (usuario) => {
-      setUsuarioEditando(usuario);
+      setUsuarioEditando({...usuario}); 
+      setPasswordEdicion(''); 
       setModalEditar(true);
   };
 
-  // --- 5. GUARDAR EDICIÓN (PUT) ---
   const handleSubmitEditar = async (e) => {
       e.preventDefault();
+
+      const usuarioActualizado = {
+          ...usuarioEditando
+      };
+
+      if (passwordEdicion.trim() !== '') {
+          usuarioActualizado.passwordHash = passwordEdicion;
+      } else {
+
+      }
+      
+      if(passwordEdicion) {
+          usuarioActualizado.passwordHash = passwordEdicion; 
+      }
+
       try {
-          await updateUsuario(usuarioEditando.idUsuario, usuarioEditando);
+          await updateUsuario(usuarioEditando.idUsuario, usuarioActualizado);
           alert("Usuario actualizado correctamente");
           setModalEditar(false);
           setUsuarioEditando(null);
+          setPasswordEdicion('');
           cargarUsuarios();
       } catch (error) {
           console.error(error);
@@ -97,33 +107,35 @@ function AdminUsuarios() {
     <>
       <header>
         <nav className="sidebar">
-            <br /><br />
+            <div className="logo-admin">
+                <h2>Admin Panel</h2>
+            </div>
           <ul>
             <li><Link to="/menu-admin">Inicio</Link></li>
             <li><Link to="/admin-animales">Animales</Link></li>
-            <li><Link to="/admin-usuarios">Usuarios</Link></li>
+            <li><Link to="/admin-usuarios" className="active">Usuarios</Link></li>
           </ul>
           <hr />
           <ul>
-            <li><Link to="/menu">Cerrar Sesión</Link></li>
+            <li><Link to="/">Volver al Sitio</Link></li>
+            <li><Link to="/login-registro" onClick={() => localStorage.removeItem("usuario")}>Cerrar Sesión</Link></li>
           </ul>
         </nav>
       </header>
 
-      <main className="contenido">
-        <br /> <br /> <br />
-        <h1>Gestión de Usuarios (Base de Datos)</h1>
-        <p>Aquí puedes administrar a los usuarios registrados en el sistema.</p>
+      <main className="contenido-admin" style={{ marginLeft: '250px', padding: '20px' }}>
+        <h1>Gestión de Usuarios</h1>
+        <button className="btn-agregar" onClick={() => setModalAgregar(true)} style={{marginBottom: '20px'}}>
+            + Agregar Nuevo Usuario
+        </button>
 
-        <button onClick={() => setModalAgregar(true)}>Agregar Usuario</button>
-
-        <table id="tablaUsuarios">
+        <table className="tabla-admin">
           <thead>
             <tr>
               <th>ID</th>
               <th>Nombre</th>
               <th>Apellido</th>
-              <th>Correo</th>
+              <th>Email</th>
               <th>Fecha Registro</th>
               <th>Acciones</th>
             </tr>
@@ -135,11 +147,10 @@ function AdminUsuarios() {
                 <td>{usuario.nombre}</td>
                 <td>{usuario.apellido}</td>
                 <td>{usuario.email}</td>
-                {/* Formateamos la fecha un poco para que se vea bien */}
-                <td>{usuario.fechaRegistro ? new Date(usuario.fechaRegistro).toLocaleDateString() : 'N/A'}</td>
+                <td>{usuario.fechaRegistro ? new Date(usuario.fechaRegistro).toLocaleDateString() : '-'}</td>
                 <td>
-                  <button onClick={() => abrirModalEditar(usuario)}>Editar</button>
-                  <button onClick={() => eliminarUsuario(usuario.idUsuario)}>Eliminar</button>
+                  <button className="btn-editar" onClick={() => abrirModalEditar(usuario)}>Editar</button>
+                  <button className="btn-eliminar" onClick={() => eliminarUsuario(usuario.idUsuario)}>Eliminar</button>
                 </td>
               </tr>
             ))}
@@ -148,30 +159,27 @@ function AdminUsuarios() {
 
         {/* --- MODAL AGREGAR --- */}
         {modalAgregar && (
-          <div className="modal" style={{display: 'block'}}>
-            <div className="modal-contenido">
-                <span className="cerrar" onClick={() => setModalAgregar(false)}>&times;</span>
-                <h2>Agregar Usuario</h2>
+          <div className="modal-overlay">
+            <div className="modal-box">
+                <span className="cerrar-modal" onClick={() => setModalAgregar(false)}>&times;</span>
+                <h2>Nuevo Usuario</h2>
                 <form onSubmit={handleSubmitAgregar}>
-                
-                <label>Nombre:</label>
-                <input type="text" required value={nuevoUsuario.nombre}
-                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, nombre: e.target.value})} />
-                
-                <label>Apellido:</label>
-                <input type="text" required value={nuevoUsuario.apellido}
-                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, apellido: e.target.value})} />
-
-                <label>Correo:</label>
-                <input type="email" required value={nuevoUsuario.email}
-                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, email: e.target.value})} />
-
-                <label>Contraseña:</label>
-                <input type="password" required value={nuevoUsuario.passwordHash}
-                    onChange={(e) => setNuevoUsuario({...nuevoUsuario, passwordHash: e.target.value})} />
-
-                <button type="button" onClick={() => setModalAgregar(false)}>Cancelar</button>
-                <button type="submit">Guardar</button>
+                    <input type="text" placeholder="Nombre" required 
+                        value={nuevoUsuario.nombre} onChange={e => setNuevoUsuario({...nuevoUsuario, nombre: e.target.value})} />
+                    
+                    <input type="text" placeholder="Apellido" required 
+                        value={nuevoUsuario.apellido} onChange={e => setNuevoUsuario({...nuevoUsuario, apellido: e.target.value})} />
+                    
+                    <input type="email" placeholder="Email" required 
+                        value={nuevoUsuario.email} onChange={e => setNuevoUsuario({...nuevoUsuario, email: e.target.value})} />
+                    
+                    <input type="password" placeholder="Contraseña" required 
+                        value={nuevoUsuario.passwordHash} onChange={e => setNuevoUsuario({...nuevoUsuario, passwordHash: e.target.value})} />
+                    
+                    <div className="modal-actions">
+                        <button type="button" onClick={() => setModalAgregar(false)}>Cancelar</button>
+                        <button type="submit" className="btn-confirmar">Guardar</button>
+                    </div>
                 </form>
             </div>
           </div>
@@ -179,12 +187,11 @@ function AdminUsuarios() {
 
         {/* --- MODAL EDITAR --- */}
         {modalEditar && usuarioEditando && (
-          <div className="modal" style={{display: 'block'}}>
-             <div className="modal-contenido">
-                <span className="cerrar" onClick={() => setModalEditar(false)}>&times;</span>
+          <div className="modal-overlay">
+             <div className="modal-box">
+                <span className="cerrar-modal" onClick={() => setModalEditar(false)}>&times;</span>
                 <h2>Editar Usuario</h2>
                 <form onSubmit={handleSubmitEditar}>
-                  
                   <label>Nombre:</label>
                   <input type="text" required value={usuarioEditando.nombre}
                     onChange={(e) => setUsuarioEditando({...usuarioEditando, nombre: e.target.value})} />
@@ -193,16 +200,20 @@ function AdminUsuarios() {
                   <input type="text" required value={usuarioEditando.apellido}
                     onChange={(e) => setUsuarioEditando({...usuarioEditando, apellido: e.target.value})} />
 
-                  <label>Correo:</label>
+                  <label>Email:</label>
                   <input type="email" required value={usuarioEditando.email}
                     onChange={(e) => setUsuarioEditando({...usuarioEditando, email: e.target.value})} />
 
-                  <label>Contraseña (Nueva):</label>
-                  <input type="text" required value={usuarioEditando.passwordHash}
-                    onChange={(e) => setUsuarioEditando({...usuarioEditando, passwordHash: e.target.value})} />
+                  <label>Contraseña (Déjalo vacío para no cambiarla):</label>
+                  <input type="text" 
+                    placeholder="Escribe para cambiar la contraseña"
+                    value={passwordEdicion}
+                    onChange={(e) => setPasswordEdicion(e.target.value)} />
 
-                  <button type="button" onClick={() => setModalEditar(false)}>Cancelar</button>
-                  <button type="submit">Actualizar</button>
+                  <div className="modal-actions">
+                      <button type="button" onClick={() => setModalEditar(false)}>Cancelar</button>
+                      <button type="submit" className="btn-confirmar">Actualizar</button>
+                  </div>
                 </form>
              </div>
           </div>
