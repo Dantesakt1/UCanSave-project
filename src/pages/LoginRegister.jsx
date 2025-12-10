@@ -52,6 +52,7 @@ function LoginRegister() {
 
             // guardamos los datos
             const usuarioData = {
+                idUsuario: response.idUsuario,
                 nombre: response.nombre,
                 email: loginEmail,
                 // si es el correo del admin le da el rol de admin sino user

@@ -8,6 +8,7 @@ function ProtectedRoute({ children, requireAdmin }) {
 
     // nadie logueado manda al login
     if (!usuario) {
+        alert("⛔ Debes estar logueado para hacer eso")
         return <Navigate to="/login-registro" replace />;
     }
 

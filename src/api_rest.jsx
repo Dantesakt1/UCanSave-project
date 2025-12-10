@@ -6,21 +6,6 @@ const api = axios.create({
     baseURL: BASE_URL,
 });
 
-// INTERCEPTOR
-// antes de enviar cualquier evento revisa si hay un token guardado
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("token"); // Buscamos el token en el navegador
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`; // Se lo pegamos a la cabecera
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
 // --- AUTENTICACION (LOGIN Y REGISTRO) ---
 
 export const loginUsuario = async (credenciales) => {
@@ -439,3 +424,27 @@ export const updateRegion = async (id, region) => {
     const response = await api.put(`/api/regiones/update/${id}`, region);
     return response.data;
 }
+
+// INTERCEPTOR
+// antes de enviar cualquier evento revisa si hay un token guardado
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+        
+        // --- AGREGAMOS ESTOS CONSOLE.LOG PARA DEPURAR ---
+        console.log("📡 Intentando petición a:", config.url);
+        
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+            console.log("🔑 Token adjuntado correctamente.");
+        } else {
+            console.warn("⚠️ ALERTA: No hay token en localStorage. La petición irá sin credenciales.");
+        }
+        // ------------------------------------------------
+        
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
