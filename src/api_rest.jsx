@@ -432,13 +432,13 @@ api.interceptors.request.use(
         const token = localStorage.getItem("token");
         
         // --- AGREGAMOS ESTOS CONSOLE.LOG PARA DEPURAR ---
-        console.log("📡 Intentando petición a:", config.url);
+        console.log("Intentando petición a:", config.url);
         
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log("🔑 Token adjuntado correctamente.");
+            console.log("Token adjuntado correctamente.");
         } else {
-            console.warn("⚠️ ALERTA: No hay token en localStorage. La petición irá sin credenciales.");
+            console.warn("ALERTA: No hay token en localStorage. La petición irá sin credenciales.");
         }
         // ------------------------------------------------
         
